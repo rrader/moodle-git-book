@@ -1,0 +1,20 @@
+# Moodle configuration
+Moodle:
+  # Base URL of your Moodle instance (without trailing slash)
+  url: "https://moodle.example.com"
+  # Your Moodle Web Services token
+  token: "your_moodle_token_here"
+
+# Books to sync
+Books:
+  # Example of a book configuration
+  - book_url: "https://moodle.example.com/mod/book/view.php?id=12345"
+    course_url: "https://moodle.example.com/course/view.php?id=67890"
+    name: "engineering"
+    directory: "engineering"  # Local directory to store book contents
+
+  # You can add multiple books
+  - book_url: "https://moodle.example.com/mod/book/view.php?id=98765"
+    course_url: "https://moodle.example.com/course/view.php?id=43210"
+    name: "mathematics"
+    directory: "mathematics" 
