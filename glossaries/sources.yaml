@@ -1,0 +1,123 @@
+glossary_id: 3
+name: Джерела
+course_id: 6
+entries_count: 11
+entries:
+- id: 82
+  concept: ai-book
+  aliases:
+  - AI Book
+  - ohhh25/ai-book
+  - репозиторій ai-book
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr"><strong>AI Book (GitHub)</strong> — відкритий репозиторій
+    матеріалів та прикладів коду для вивчення штучного інтелекту: <a href="https://github.com/ohhh25/ai-book"
+    target="_blank" rel="noopener noreferrer">https://github.com/ohhh25/ai-book</a></p>'
+- id: 78
+  concept: AI4K12
+  aliases:
+  - ai4k12
+  - ai4k12.org
+  - AI for K-12
+  - ініціатива AI4K12
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr"><strong>AI4K12 (Artificial Intelligence for K-12)</strong>
+    — спільна ініціатива Асоціації з розвитку штучного інтелекту (AAAI) та Асоціації
+    вчителів інформатики (CSTA), яка розробляє національні освітні настанови та стандарти
+    навчання ШІ для учнів початкової та середньої школи: <a href="https://ai4k12.org/"
+    target="_blank" rel="noopener noreferrer">https://ai4k12.org/</a></p>'
+- id: 79
+  concept: AI4K12-Big-Ideas
+  aliases:
+  - big-ideas-poster
+  - Пʼять великих ідей штучного інтелекту
+  - 5 великих ідей
+  - Five Big Ideas
+  - постер 5 великих ідей
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr"><strong>Пʼять великих ідей штучного інтелекту (AI4K12
+    Five Big Ideas in AI)</strong> — ключові концептуальні напрями розуміння ШІ для
+    шкільної освіти (Сприйняття, Представлення й міркування, Навчання, Взаємодія з
+    людиною, Суспільний вплив). Український переклад постера: <a href="https://ai4k12.org/wp-content/uploads/AI4K12_Five_Big_Ideas_Poster_v2_Ukrainian.pdf"
+    target="_blank" rel="noopener noreferrer">AI4K12 Five Big Ideas Poster (PDF)</a>.</p>'
+- id: 18
+  concept: Bloomberg-2023-workshift
+  aliases: []
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr" style="text-align:left;">Bloomberg. (2023). <em>Work Shift:
+    Has the AI Hiring Boom Gone Bust?</em>. Retrieved from <a href="https://www.bloomberg.com/news/newsletters/2023-07-18/work-shift-has-the-ai-hiring-boom-gone-bust">https://www.bloomberg.com/news/newsletters/2023-07-18/work-shift-has-the-ai-hiring-boom-gone-bust</a><br
+    /></p>'
+- id: 19
+  concept: grammarly-restructuring
+  aliases: []
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr" style="text-align: left;"><span id="docs-internal-guid-93a1ce1a-7fff-5a33-4c73-c3413af48ac3"><a
+    href="https://www.grammarly.com/blog/company-restructuring/" style="">https://www.grammarly.com/blog/company-restructuring/</a></span><br></p>'
+- id: 20
+  concept: hrdrive-layoffs
+  aliases: []
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr" style="text-align: left;"><span id="docs-internal-guid-16786eac-7fff-c628-d2c2-5315f7f5273b"><a
+    href="https://www.hrdive.com/news/tech-business-leaders-anticipate-hiring-layoffs-ai/714826/"
+    style="">https://www.hrdive.com/news/tech-business-leaders-anticipate-hiring-layoffs-ai/714826/</a></span><br></p>'
+- id: 81
+  concept: microsoft-ai-beginners
+  aliases:
+  - AI for Beginners
+  - Microsoft AI for Beginners
+  - ШІ для початківців від Microsoft
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr"><strong>Microsoft: AI for Beginners</strong> — комплексний
+    12-тижневий навчальний курс із 24 уроків про основи та технології штучного інтелекту
+    від Microsoft (символьний ШІ, нейронні мережі, комп''ютерний зір, NLP, генетичні
+    алгоритми): <a href="https://microsoft.github.io/AI-For-Beginners/" target="_blank"
+    rel="noopener noreferrer">https://microsoft.github.io/AI-For-Beginners/</a></p>'
+- id: 80
+  concept: pythonguide
+  aliases:
+  - Онлайн-довідник з Python
+  - pythonguide.rozh2sch.org.ua
+  - довідник з Python
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr"><strong>Онлайн-довідник з Python (pythonguide)</strong>
+    — детальний україномовний навчальний гід із синтаксису, структур даних, циклів,
+    функцій та об''єктно-орієнтованого програмування: <a href="https://pythonguide.rozh2sch.org.ua/"
+    target="_blank" rel="noopener noreferrer">https://pythonguide.rozh2sch.org.ua/</a></p>'
+- id: 17
+  concept: unesco2022k12ai
+  aliases: []
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 0
+  definition: 'UNESCO. (2022). <em>K-12 AI curricula: A mapping of government-endorsed
+    AI curricula.</em> Retrieved from <a rel="noopener" target="_new" href="https://unesdoc.unesco.org/ark:/48223/pf0000380602">https://unesdoc.unesco.org/ark:/48223/pf0000380602</a>'
+- id: 41
+  concept: Елементи ШІ
+  aliases: []
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr" style="text-align: left;">Курс https://courses.mooc.fi/org/elements-of-ai/courses/elements-of-ai-ukr</p>'
+- id: 28
+  concept: карʼєрні картки
+  aliases: []
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 1
+  definition: '<p dir="ltr" style="text-align: left;">https://ai4ga.org/careers/</p>'

@@ -1,0 +1,43 @@
+# Moodle Book & Glossary Sync Configuration
+
+Moodle:
+  url: "https://moodle.rmn.pp.ua"
+  ssh_host: "monica"
+  container: "services-moodle-1"
+
+Books:
+  - name: "ai-10-11"
+    book_id: 3
+    cmid: 46
+    course_id: 6
+    title: "Основи інженерії штучного інтелекту 10-11 класи"
+    directory: "books/ai-10-11"
+
+  - name: "planning"
+    book_id: 5
+    cmid: 52
+    course_id: 6
+    title: "Календарне планування"
+    directory: "books/planning"
+
+  - name: "intro89lab"
+    book_id: 7
+    cmid: 89
+    course_id: 6
+    title: "Вступ до ШІ, гурткова робота"
+    directory: "books/intro89lab"
+
+Glossaries:
+  - name: "sources"
+    glossary_id: 3
+    cmid: 48
+    course_id: 6
+    title: "Джерела"
+    file: "glossaries/sources.yaml"
+
+  - name: "terms_and_people"
+    glossary_id: 4
+    cmid: 50
+    course_id: 6
+    title: "Терміни та персоналії"
+    file: "glossaries/terms_and_people.yaml"

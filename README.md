@@ -1,69 +1,110 @@
-# Moodle Book Sync
+# Moodle Git Book Sync
 
-Moodle Book Sync is a Python script designed to synchronize Moodle books with local files. It allows you to pull book chapters from Moodle and save them locally, as well as push local changes back to Moodle (not implemented yet).
+Двосторонній інструмент синхронізації електронних підручників (`mod_book`) та глосаріїв (`mod_glossary`) з платформи Moodle (`moodle.rmn.pp.ua`) у версіоновані локальні файли з YAML Frontmatter для комфортного читання та редагування людиною та AI-агентом.
 
-## Features
+## Основні переваги та архітектура
 
-- Pull book chapters from Moodle and save them as HTML files.
-- Push local HTML files back to Moodle (not implemented yet).
-- Supports multiple books and chapters.
-- Configurable via a YAML configuration file.
+1. **Прозора структура файлів (1 глава = 1 файл):**
+   - Усі розділи зберігаються з нумерацією за сторінками підручника: `01_ch11_vstup.html`, `02_ch10_osnovy_shtuchnoho_intelektu.html` тощо.
+   - Метадані глави (ID, номер сторінки, рівень підрозділу, назва, видимість, час зміни) зафіксовані у верхньому блоці **YAML Frontmatter**, а під ним розташований чистий HTML-вміст.
+2. **Конфліктний захист (Conflict Guard):**
+   - Перед записом у Moodle перевіряється, чи не була глава змінена на сервері після локального завантаження.
+   - Якщо на сервері з'явилися нові зміни, інструмент зупиняє запис зі статусом `🔥 CONFLICT`, захищаючи дані від випадкового затирання.
+3. **Автоматичні знімки версій (`.sync_backups/`):**
+   - Перед кожною операцією `push` або `pull` створюється локальний бекап з можливістю миттєвого відкату (`rollback`).
+4. **Інтеграція з Git:**
+   - Прапорець `--git-commit` автоматично фіксує всі зміни у Git із конвенційним повідомленням.
 
-## Requirements
+---
 
-- Python 3.6+
-- `requests` library
-- `PyYAML` library
+## Структура каталогу
 
-## Installation
-
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/rrader/moodle-git-book.git
-    cd moodle-book-sync
-    ```
-
-2. Install the required Python packages:
-    ```sh
-    pip install -r requirements.txt
-    ```
-
-## Configuration
-
-Create a `config.yaml` file in the root directory with the following structure:
-
-```yaml
-# Moodle configuration
-Moodle:
-  # Base URL of your Moodle instance (without trailing slash)
-  url: "https://moodle.example.com"
-  # Your Moodle Web Services token
-  token: "your_moodle_token_here"
-
-# Books to sync
-Books:
-  # Example of a book configuration
-  - book_url: "https://moodle.example.com/mod/book/view.php?id=12345"
-    course_url: "https://moodle.example.com/course/view.php?id=67890"
-    name: "engineering"
-    directory: "engineering"  # Local directory to store book contents
-
-  # You can add multiple books
-  - book_url: "https://moodle.example.com/mod/book/view.php?id=98765"
-    course_url: "https://moodle.example.com/course/view.php?id=43210"
-    name: "mathematics"
-    directory: "mathematics" 
+```text
+projects/School/moodle-git-book/
+├── books/
+│   ├── ai-10-11/                              # Книга #3 (CMID 46) "Основи інженерії штучного інтелекту 10-11 класи"
+│   │   ├── _book.json                         # Загальні метадані книги
+│   │   ├── 01_ch11_vstup.html                 # Глави підручника за номерами сторінок
+│   │   ├── 02_ch10_osnovy_shtuchnoho_intelektu.html
+│   │   └── ...
+│   ├── planning/                              # Книга #5 (CMID 52) "Календарне планування"
+│   └── intro89lab/                            # Книга #7 (CMID 89) "Вступ до ШІ, гурткова робота"
+├── glossaries/
+│   ├── sources.yaml                           # Глосарій #3 (CMID 48) "Джерела"
+│   └── terms_and_people.yaml                  # Глосарій #4 (CMID 50) "Терміни та персоналії"
+├── config.yaml                                # Конфігурація підключення та мапінг книг/глосаріїв
+├── moodle_sync.py                             # Основний скрипт синхронізації
+└── README.md
 ```
 
-## Usage
+---
 
-### Pulling Book Chapters
+## Шпаргалка команд для Агента та Користувача
 
-To pull book chapters from your Moodle instance, run the following command:
-
-```sh
-python moodle_book_sync.py pull --book <book_name>
+### 1. Перевірка статусу розбіжностей (`status`)
+Показує повну таблицю всіх глав: які знаходяться в синхронізації (`✅ In sync`), змінені локально (`✏️ MOD`), змінені на сервері (`📥 NEED PULL`) чи мають конфлікт (`🔥 CONFLICT`).
+```bash
+python3 moodle_sync.py status
+python3 moodle_sync.py status --book ai-10-11
 ```
 
-Replace `<book_name>` with the name of the book you want to pull.
+### 2. Перегляд різниці (`diff`)
+Порівнює локальний файл із поточною базою даних Moodle:
+```bash
+# За номером ID глави:
+python3 moodle_sync.py diff 11
 
+# Або за назвою файлу:
+python3 moodle_sync.py diff 01_ch11_vstup.html
+```
+
+### 3. Отримання свіжих матеріалів із Moodle (`pull`)
+```bash
+# Завантажити всі книги та глосарії:
+python3 moodle_sync.py pull
+
+# Завантажити конкретну книгу:
+python3 moodle_sync.py pull --book ai-10-11
+
+# Завантажити та автоматично створити Git-коміт:
+python3 moodle_sync.py pull --git-commit
+```
+
+### 4. Відправка локальних змін у Moodle (`push`)
+Сканує локальні файли, знаходить змінені розділи, оновлює їх у базі Moodle під користувачем `daemon`, скидає кеш курсу та `purge_all_caches()`:
+```bash
+# Тестовий прогін без запису (dry-run):
+python3 moodle_sync.py push --dry-run
+
+# Відправити зміни конкретної глави:
+python3 moodle_sync.py push --chapter 11
+
+# Відправити всі зміни книги:
+python3 moodle_sync.py push --book ai-10-11
+
+# Примусовий перезапис (якщо на сервері старіші правки):
+python3 moodle_sync.py push --book ai-10-11 --force
+
+# Відправити зміни та автоматично зафіксувати в Git:
+python3 moodle_sync.py push --git-commit
+```
+
+### 5. Створення нового розділу (`add-chapter`)
+Створює розділ у Moodle та одразу витягує його у локальний файл із правильним порядковим номером:
+```bash
+python3 moodle_sync.py add-chapter \
+  --book ai-10-11 \
+  --title "Пʼять великих ідей AI4K12" \
+  --subchapter 1 \
+  --after 15 \
+  --content "<p>Опис великих ідей...</p>"
+```
+
+### 6. Керування бекапами та відкат (`backups` / `rollback`)
+```bash
+# Перегляд списку автоматичних знімків:
+python3 moodle_sync.py backups
+
+# Відкат локальних файлів до стану певного знімка:
+python3 moodle_sync.py rollback 20261112_161500_pre_push_ai-10-11
+```
