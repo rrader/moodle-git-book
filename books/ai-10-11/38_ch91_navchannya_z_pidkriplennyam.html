@@ -1,0 +1,65 @@
+---
+id: 91
+book_id: 3
+course_id: 6
+pagenum: 38
+subchapter: 1
+title: Навчання з підкріпленням
+hidden: 0
+timemodified: 1739292356
+---
+<p><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><br><img src="@@PLUGINFILE@@/Idea3.png" alt="" width="200" height="107" role="presentation" class="img-fluid atto_image_button_right">Навчання з підкріпленням (Reinforcement Learning) - це тип машинного навчання, де агент навчається приймати рішення через взаємодію з середовищем. Агент отримує винагороди або штрафи за свої дії, і його мета - максимізувати сумарну винагороду.</span></p>
+
+    <p>Основні компоненти навчання з підкріпленням:</p>
+    <ul>
+        <li><strong>Агент</strong> - система, що навчається і приймає рішення</li>
+        <li><strong>Середовище</strong> - світ, з яким взаємодіє агент</li>
+        <li><strong>Стан</strong> - поточна ситуація в середовищі</li>
+        <li><strong>Дія</strong> - що агент може зробити</li>
+        <li><strong>Винагорода</strong> - зворотній зв'язок від середовища</li>
+    </ul><p><img src="@@PLUGINFILE@@/Idea2.png" alt="" width="200" height="115" role="presentation" class="atto_image_button_right"><br><br></p>
+
+    <h3>Q-Learning</h3>
+    <p>Q-Learning - це один з найпопулярніших алгоритмів навчання з підкріпленням. Він базується на створенні Q-таблиці, яка зберігає очікувані винагороди для кожної пари стан-дія.</p>
+    <p>Q-Learning широко застосовується в:</p>
+    <ul>
+        <li>Робототехніці</li>
+        <li>Ігрових системах</li>
+        <li>Оптимізації ресурсів</li>
+        <li>Автономному керуванні</li>
+    </ul>
+
+    <h3>Q-Learning для гри в хрестики-нолики</h3><p><a href="@@PLUGINFILE@@/canvas-game-template.zip"><strong><u>Завантажити приклад проєкту</u></strong></a><br></p>
+    <p>У випадку хрестиків-ноликів, Q-матриця буде мати наступний вигляд:</p>
+    <ul>
+        <li><strong>Рядки</strong> - всі можливі стани дошки (приблизно 3^9 = 19683 стани)</li>
+        <li><strong>Стовпці</strong> - можливі дії (позиції від 0 до 8)</li>
+    </ul>
+
+    <p>Наприклад, частина Q-матриці може виглядати так:</p>
+    <pre>    Стан дошки         Дія 0   Дія 1   Дія 2   ...   Дія 8
+    [_,_,_,_,_,_,_,_,_]  0.0    0.0     0.0    ...    0.0
+    [X,_,_,_,_,_,_,_,_]  0.0    0.4     0.3    ...    0.1
+    [X,O,_,_,_,_,_,_,_]  0.0    0.0     0.7    ...    0.2
+    </pre>
+
+    <h4>Формула оновлення Q-значень</h4>
+    <p>Q-значення оновлюються за формулою:</p>
+    <pre>    Q(s,a) = Q(s,a) + α[R + γ·max(Q(s',a')) - Q(s,a)]
+    
+    де:
+    s - поточний стан
+    a - виконана дія
+    α - швидкість навчання (learning rate)
+    R - отримана винагорода
+    γ - коефіцієнт знецінення (discount factor)
+    s' - наступний стан
+    max(Q(s',a')) - максимальне Q-значення для наступного стану
+    </pre>
+
+    <p>Типові значення параметрів для хрестиків-ноликів:</p>
+    <ul>
+        <li>α = 0.1 - 0.3 (повільне навчання для кращої збіжності)</li>
+        <li>γ = 0.9 - 0.95 (високе значення, бо важливі довгострокові наслідки)</li>
+        <li>R = 1 (перемога), -1 (програш), 0 (нічия або проміжний хід)</li>
+    </ul><br>

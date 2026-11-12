@@ -1,0 +1,105 @@
+---
+id: 26
+book_id: 3
+course_id: 6
+pagenum: 41
+subchapter: 1
+title: 'Практична робота: Машинне навчання, Python та миші'
+hidden: 0
+timemodified: 1735036455
+---
+<p dir="ltr"></p>
+<h4><span>Лінійна регресія - метод машинного навчання</span></h4>
+<p><strong>Лінійна регресія</strong> — це простий і поширений метод машинного навчання, який використовується для прогнозування залежності між змінними. Модель лінійної регресії шукає пряму, що найкраще описує зв'язок між незалежною змінною (вхідними даними) і залежною змінною (результатом або прогнозом).</p>
+<p><strong>Формула лінійної регресії</strong><br>Лінійна регресія моделює залежність між двома змінними за допомогою рівняння прямої:<br><code>y = kx + b</code><br>де:</p>
+<ul>
+    <li><strong>y</strong> — прогнозоване значення,</li>
+    <li><strong>x</strong> — незалежна змінна (вхід),</li>
+    <li><strong>k</strong> — кут нахилу (коефіцієнт або вага),</li>
+    <li><strong>b</strong> — точка перетину з віссю y (зміщення або інтерсепт).</li>
+</ul>
+<p>Мета лінійної регресії — знайти такі значення <code>k</code> і <code>b</code>, щоб лінія найкраще відповідала даним, мінімізуючи помилку між реальними і прогнозованими значеннями.</p>
+<p><strong>Приклад</strong><br>Якщо у вас є дані про продажі автомобілів за роками, лінійна регресія може допомогти спрогнозувати продажі на наступний рік на основі цих даних.</p>
+<p>Лінійна регресія є одним із найпростіших алгоритмів для прогнозування, і її часто використовують як базову модель.</p>
+<h4><span style="font-size: 0.9375rem; font-weight: 400; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;">Припустимо, ви хочете прогнозувати оцінки студентів на основі кількості годин навчання. Для цього можна використати лінійну регресію для моделювання залежності.</span></h4>
+<p><strong>Приклад коду:</strong></p>
+<p><code>import numpy as np</code><br><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>from sklearn.linear_model import LinearRegression</code><br></span><span style="font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 0.9375rem;"><br><code># Дані: роки та кількість студентів</code><br></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>years = np.array([[2017], [2018], [2019], [2020], [2021]])</code><br></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>students = np.array([400, 420, 450, 470, 490])</code></span></p>
+<p></p>
+<p>Намалюємо графік за допомогою бібліотеки matplotlib:</p><p><code>import matplotlib.pyplot as plt</code><br><code style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;">plt.plot(years, students, marker='o', linestyle='-', color='b')</code></p><p><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;">Параметри функції plot() означають, що ми будуємо графік по точках із масивом years по вісі X, students по вісі Y. Точки мають бути позначені кружечками (<strong>o</strong>), лінія має бути суцільною (<strong>-</strong>), а колір має бути синім (<strong>b</strong> - blue).</span></p><p><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><img src="@@PLUGINFILE@@/Screenshot%202024-12-23%20at%2012.46.57.png" alt="Графік даних студентів по роках" width="399" height="303" class="img-fluid atto_image_button_text-bottom"><br></span></p><p><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;">Тепер ми можемо створити модель лінійної регресії, яка підбере параметри прямої так, щоб вона максимально точно відповідала нашим даним:</span></p><span style="font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 0.9375rem;"><code># Створення та навчання моделі</code><br></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>model = LinearRegression()</code><br></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>model.fit(years, students)</code><br><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><br><code># Прогноз на 2022 та 2023 роки</code><br></span></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>predictions = model.predict(np.array([[2022], [2023]]))</code><br></span><code style="font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 0.9375rem;">print(predictions)</code><br>
+<p></p>
+<p>Результатом роботи нашої програми буде масив з двох чисел:</p><p><code>array([515., 538.])</code></p><p>що відповідають прогнозній кількості студентів на 2022 та 2023 рік.</p><p></p><p>Але спочатку, давайте потренуємось працювати із списками.</p>
+<h4><span style="font-size: 1.40625rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;">Завдання №1: Операції зі списками</span></h4>
+<p></p>
+<p>Дано два списки:</p>
+<ul>
+    <li>Список імен студентів: <code>['Олександр', 'Іван', 'Марія', 'Анна', 'Софія']</code></li>
+    <li>Відповідні оцінки за тест: <code>[78, 85, 88, 90, 92]</code></li>
+</ul>
+<p><strong>Операції:</strong></p>
+<ol>
+    <li>Виведіть ім’я студента, що знаходиться на другій позиції.</li>
+    <li>Виведіть оцінку, яку отримала <strong>Анна</strong>.</li>
+    <li>Додайте нове ім’я <code>"Віктор"</code> і оцінку <code>95</code> до списків.</li>
+    <li>Виведіть оновлений список студентів та їхні оцінки.</li>
+</ol>
+<p><strong>Очікуваний результат:</strong></p>
+<p><code>Іван</code></p>
+<p><code>90</code></p>
+<p><code>['Олександр', 'Іван', 'Марія', 'Анна', 'Софія', 'Віктор']</code></p>
+<p><code>[78, 85, 88, 90, 92, 95]</code></p>
+<h4>Завдання №2: Операції з масивами NumPy</h4>
+<p>Створіть масив з оцінками студентів:<br></p>
+<p><code>import numpy as np</code><br><code style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;">scores = np.array([85, 90, 78, 92, 88, 95, 67, 84, 91, 75])</code></p>
+<p></p>
+<p><strong>Операції:</strong></p>
+<ol>
+    <li>Обчисліть середнє значення оцінок:<br><code>mean_score = np.mean(scores)</code></li>
+    <li>Знайдіть мінімальну та максимальну оцінки:<br><code>min_score = np.min(scores)</code><br><code>max_score = np.max(scores)</code></li>
+</ol>
+<h4>Завдання №3: Прогнозуємо розмір мишей за допомогою лінійної регресії</h4>
+<p>Використовуйте <strong>scikit-learn</strong> для створення прогнозної моделі розміру мишей на основі їхнього віку.<br></p>
+<p></p>
+<p><strong>Дані:</strong></p>
+<table>
+    <caption style="caption-side: top;">Вимірювання мишей</caption>
+    <thead>
+        <tr>
+            <th scope="col" style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">Вік миші (дні)</th>
+            <th scope="col" style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">Розмір миші (см)</th><th scope="col" style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">&nbsp;Вага миші (г)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">5</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">3.1</td><td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">&nbsp;3</td>
+        </tr>
+        <tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">10</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">4.2</td><td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">&nbsp;6</td>
+        </tr>
+        <tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">15</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">5.0</td><td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">&nbsp;12</td>
+        </tr>
+        <tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">20</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">5.8</td><td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">&nbsp;16</td>
+        </tr>
+        <tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">25</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">6.4</td><td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">&nbsp;22</td>
+        </tr>
+        <tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">30</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">7.0</td><td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">&nbsp;28</td>
+        </tr><tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">42</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">7.5</td><td style="border-width: 1px; border-style: solid; border-color: rgb(51, 51, 51);">&nbsp;30</td>
+        </tr>
+    </tbody>
+</table><strong><br></strong><p><span>Використовуючи ці дані, створіть модель лінійної регресії для прогнозування розміру миші на основі її віку.<br></span></p><p><strong>Код:</strong><br>
+</p><p></p>
+<p></p>
+<p></p>
+<p></p>
+<p><span><code>import numpy as np</code><br></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>from sklearn.linear_model import LinearRegression</code><br><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><br><code># Дані</code><br></span></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>age = np.array([[5], [10], [15], [20], [25], [30]])</code><br></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>size = np.array([3.1, 4.2, 5.0, 5.8, 6.4, 7.0])</code><br><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><br><code># Створення моделі</code><br></span></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>model = LinearRegression()</code><br></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>model.fit(age, size)</code><br><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><br><code># Прогноз для 35 днів</code><br></span></span><span style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;"><code>prediction = model.predict(np.array([[35]]))</code><br></span><code style="font-size: 0.9375rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;">print(f"Прогнозований розмір миші для 35 днів: {prediction[0]:.2f} см")</code></p><p><strong>Додаткове завдання:<br></strong></p><p><span>Використовуючи ці дані, створіть модель лінійної регресії для прогнозування розміру миші на основі її <strong>ваги</strong>, а не віку. Спрогнозуйте, яка має бути довжина миші, у якої вага - 1 кг?</span></p><p><span><br></span></p><p></p>

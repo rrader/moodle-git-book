@@ -757,7 +757,8 @@ def main() -> None:
     add_ch_p.add_argument("--title", type=str, required=True, help="Chapter title")
     add_ch_p.add_argument("--subchapter", type=int, choices=[0, 1], default=0, help="0=main, 1=subchapter")
     add_ch_p.add_argument("--after", type=int, default=None, help="Chapter ID to insert after")
-    add_ch_p.add_argument("--content", type=str, default="<p>Текст розділу...</p>", help="Initial HTML content")
+    add_ch_p.add_argument("--content", type=str, default=None, help="Initial HTML content")
+    add_ch_p.add_argument("--content-file", type=str, default=None, help="File with HTML content")
 
     # Backups command
     subparsers.add_parser("backups", help="List local timestamped snapshots in .sync_backups/")
@@ -812,12 +813,16 @@ def main() -> None:
         mgr.diff_chapter(args.chapter)
 
     elif args.action == "add-chapter":
+        content_text = args.content or "<p>Новий розділ...</p>"
+        if args.content_file:
+            with open(args.content_file, "r", encoding="utf-8") as f:
+                content_text = f.read()
         mgr.add_chapter(
             book_name=args.book,
             title=args.title,
             subchapter=args.subchapter,
             after_chapter=args.after,
-            content=args.content,
+            content=content_text,
         )
 
     elif args.action == "backups":
