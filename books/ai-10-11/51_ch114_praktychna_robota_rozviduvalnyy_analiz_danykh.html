@@ -1,0 +1,111 @@
+---
+id: 114
+book_id: 3
+course_id: 6
+pagenum: 51
+subchapter: 1
+title: 'Практична робота: Розвідувальний аналіз даних (EDA) в Orange 3'
+hidden: 0
+timemodified: 1794499287
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    <strong>Розвідувальний аналіз даних (Exploratory Data Analysis, EDA)</strong> — це обов'язковий перший етап будь-якого Data Science чи AI проєкту. На цьому етапі ми вивчаємо розподіли ознак, статистичні характеристики, викиди (outliers) та кореляційні зв'язки у наборі даних за допомогою візуальних графіків та описової статистики.
+</p>
+
+<div class="card mb-4 border-info" style="border-left: 5px solid #17a2b8; background-color: #f8f9fa;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-info mb-2">🎯 Чому EDA настільки важливий?</h5>
+        <p class="card-text mb-0">
+            «Сміття на вході — сміття на виході» (Garbage in, Garbage out). Якщо подати в нейромережу неперевірені дані з пропусками чи помилками вимірювань, модель навчиться неправильним закономірностям. EDA дозволяє знайти та усунути ці дефекти до початку навчання.
+        </p>
+    </div>
+</div>
+
+<hr>
+
+<h3>📋 Інструменти EDA в середовищі Orange 3</h3>
+
+<h4>1. Огляд таблиці даних: віджет Data Table</h4>
+<p>
+    Перше знайомство з датасетом починається з віджета <strong>Data Table</strong>. Він відображає дані у звичному рядково-стовпчиковому форматі, дозволяє сортувати записи, шукати окремі екземпляри та перевіряти типи колонок:
+</p>
+<div class="card my-3 text-center border-light shadow-sm">
+    <div class="card-body p-2">
+        <img src="@@PLUGINFILE@@/Screenshot%202025-05-24%20at%2010.22.47.png" alt="Табличний перегляд даних в Orange" class="img-fluid" style="border-radius: 6px; max-width: 100%;">
+    </div>
+</div>
+
+<h4>2. Описова статистика колонок: Feature Statistics</h4>
+<p>
+    Віджет <strong>Feature Statistics</strong> миттєво обчислює ключові характеристики для кожної ознаки:
+</p>
+<ul>
+    <li><strong>Mean (Середнє арифметичне)</strong> та <strong>Median (Медіана)</strong>;</li>
+    <li><strong>Min / Max</strong> — екстремальні межі значень;</li>
+    <li><strong>Dispersion / Std (Стандартне відхилення)</strong> — ступінь розкиду значень навколо середнього;</li>
+    <li><strong>Missing (%)</strong> — кількість пропущених значень у вибірці.</li>
+</ul>
+<div class="card my-3 text-center border-light shadow-sm">
+    <div class="card-body p-2">
+        <img src="@@PLUGINFILE@@/Screenshot%202025-05-24%20at%2010.22.56.png" alt="Статистика ознак в Orange" class="img-fluid" style="border-radius: 6px; max-width: 100%;">
+    </div>
+</div>
+
+<h4>3. Дослідження зв'язків між ознаками: Correlation</h4>
+<p>
+    Кореляція Пірсона ($r \in [-1; +1]$) вимірює силу та напрям лінійного зв'язку між двома числовими величинами:
+</p>
+<ul>
+    <li><strong>$r \approx +1$:</strong> сильний прямий зв'язок (зі зростанням однієї змінної зростає інша);</li>
+    <li><strong>$r \approx 0$:</strong> зв'язок практично відсутній (змінні незалежні);</li>
+    <li><strong>$r \approx -1$:</strong> сильний зворотний зв'язок.</li>
+</ul>
+<div class="card my-3 text-center border-light shadow-sm">
+    <div class="card-body p-2">
+        <img src="@@PLUGINFILE@@/Screenshot%202025-05-24%20at%2010.30.25.png" alt="Кореляційна матриця в Orange" class="img-fluid" style="border-radius: 6px; max-width: 100%;">
+    </div>
+</div>
+
+<h4>4. Візуальний аналіз: Scatter Plot та Box Plot</h4>
+<p>
+    Графічна візуалізація дозволяє виявити нелінійні кластери та викиди, які не помітні в таблицях:
+</p>
+<ul>
+    <li><strong>Scatter Plot (Точкова діаграма):</strong> відображає взаємодію двох вибраних числових осей із можливістю фарбування точок за міткою класу (Color by Category).</li>
+    <li><strong>Box Plot (Діаграма розмаху / «ящик з вусами»):</strong> показує квартилі розподілу, медіану та окремі точки-викиди (outliers).</li>
+</ul>
+
+<div class="row my-3">
+    <div class="col-md-6 mb-2">
+        <div class="card h-100 border-light shadow-sm text-center">
+            <div class="card-body p-2">
+                <img src="@@PLUGINFILE@@/Screenshot%202025-05-24%20at%2010.32.49.png" alt="Scatter Plot в Orange" class="img-fluid" style="border-radius: 6px;">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-2">
+        <div class="card h-100 border-light shadow-sm text-center">
+            <div class="card-body p-2">
+                <img src="@@PLUGINFILE@@/Screenshot%202025-05-24%20at%2010.32.41.png" alt="Box Plot в Orange" class="img-fluid" style="border-radius: 6px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card my-4" style="clear: both; overflow: hidden; border: 1px solid #dee2e6; border-radius: 8px;">
+  <div class="card-header bg-light font-weight-bold">
+    🎬 Відеоурок: Розвідувальний аналіз та візуалізація в Orange 3
+  </div>
+  <div class="card-body p-3 text-center" style="clear: both;">
+    <p><a href="https://www.youtube.com/watch?v=UiedzQwqVXs">https://www.youtube.com/watch?v=UiedzQwqVXs</a></p>
+  </div>
+</div>
+
+<div class="alert alert-success">
+    <strong>✅ Завдання для самостійної здачі:</strong>
+    <ol class="mb-0">
+        <li>Завантажте будь-який навчальний датасет (наприклад, <code>Iris</code> або <code>Housing</code>).</li>
+        <li>Знайдіть пару ознак з найсильнішою позитивною кореляцією та парою з кореляцією, близькою до нуля.</li>
+        <li>Побудуйте діаграму <code>Scatter Plot</code> для цих ознак і збережіть графік у звіт.</li>
+    </ol>
+</div>

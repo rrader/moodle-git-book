@@ -1,0 +1,138 @@
+---
+id: 116
+book_id: 3
+course_id: 6
+pagenum: 57
+subchapter: 1
+title: 'Практична робота: Моделювання простої мовної моделі (N-gram Language Model)'
+hidden: 0
+timemodified: 1794499287
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    <strong>Мовні моделі (Language Models, LM)</strong> — це фундаментальний клас алгоритмів штучного інтелекту, призначений для математичного моделювання людської мови. Їхнє базове завдання — <strong>передбачати наступне слово (next-token prediction)</strong>, враховуючи попередній контекст. Хоча сучасні моделі (як-от GPT-4 чи Claude) побудовані на глибинних нейромережах-трансформерах, ключовий принцип їхньої роботи можна зрозуміти та змоделювати на класичній статистичній <strong>N-грамній моделі</strong>.
+</p>
+
+<div class="card mb-4 border-info" style="border-left: 5px solid #17a2b8; background-color: #f8f9fa;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-info mb-2">💡 Як «думає» авторегресійна мовна модель?</h5>
+        <p class="card-text mb-0">
+            Мовна модель не «розуміє» текст у людському сенсі. Вона обчислює умовну ймовірність появи наступного слова:
+            <br>
+            <span style="font-size: 1.15rem; font-weight: bold; color: #0c5460;">P(wₜ | wₜ₋₁, wₜ₋₂)</span> — <em>«яка ймовірність слова wₜ, якщо попередніми словами були wₜ₋₂ та wₜ₋₁?»</em>
+        </p>
+    </div>
+</div>
+
+<h3>🎯 Мета роботи:</h3>
+<ul>
+    <li>Зрозуміти концепцію <strong>контекстного вікна (Context Window)</strong> та передбачення наступного токена.</li>
+    <li>Навчитися готувати текстовий корпус для задачі передбачення слів.</li>
+    <li>Побудувати триграмну мовну модель за допомогою візуального інструменту <strong>Orange Data Mining</strong> (або коду на Python).</li>
+    <li>Дослідити оцінку якості мовної моделі через матрицю помилок та метрику точності (Accuracy).</li>
+</ul>
+
+<hr>
+
+<h3>📐 Теоретичні основи: Від N-грам до генеративного ШІ</h3>
+<p>
+    Будь-який текст можна розбити на послідовні вікна фіксованої довжини — <strong>N-грами</strong>:
+</p>
+<ul>
+    <li><strong>Уніграма (Unigram, N=1):</strong> окремі ізольовані слова без контексту.</li>
+    <li><strong>Біграма (Bigram, N=2):</strong> пари слів (наприклад, <code>["штучний", "інтелект"]</code>). Передбачення слова на основі 1 попереднього.</li>
+    <li><strong>Триграма (Trigram, N=3):</strong> трійки слів (наприклад, <code>["мова", "програмування"] &rarr; "Python"</code>). Перші два слова утворюють <strong>Контекст (Features)</strong>, а третє — <strong>Цільовий токен (Target)</strong>.</li>
+</ul>
+
+<div class="alert alert-secondary">
+    <strong>Приклад формування навчальних прикладів із речення:</strong>
+    <p class="mb-0">
+        <em>«Глибоке навчання відкриває нові можливості для науки»</em>
+        <br>
+        1. <code>Контекст: ["Глибоке", "навчання"]</code> &rarr; <code>Ціль: "відкриває"</code>
+        <br>
+        2. <code>Контекст: ["навчання", "відкриває"]</code> &rarr; <code>Ціль: "нові"</code>
+        <br>
+        3. <code>Контекст: ["відкриває", "нові"]</code> &rarr; <code>Ціль: "можливості"</code>
+    </p>
+</div>
+
+<hr>
+
+<h3>📋 Порядок виконання роботи в Orange Data Mining</h3>
+
+<h4>Крок 1. Підготовка навчального корпусу текстів</h4>
+<ol>
+    <li>Підготуйте текстовий файл (наприклад, уривок наукової статті чи художнього твору обсягом 300–500 слів).</li>
+    <li>Сформуйте таблицю (CSV), що містить дві колонки:
+        <ul>
+            <li><code>context</code> (текстовий рядок із двох послідовних слів);</li>
+            <li><code>next_token</code> (одне наступне слово, яке має бути передбачене).</li>
+        </ul>
+    </li>
+</ol>
+
+<h4>Крок 2. Побудова моделі в Orange Canvas</h4>
+<p>Створіть на робочому полотні Orange наступний конвеєр обробки:</p>
+<div class="alert alert-light border text-center font-weight-bold" style="font-size: 1.05rem;">
+    [ CSV File ] &rarr; [ Select Columns ] &rarr; [ Preprocess Text / Bag of Words ] &rarr; [ Logistic Regression / Naive Bayes ] &rarr; [ Test & Score ]
+</div>
+
+<ol>
+    <li><strong>Select Columns:</strong>
+        <ul>
+            <li>Перетягніть колонку <code>context</code> у блок <strong>Features (Ознаки)</strong>.</li>
+            <li>Перетягніть колонку <code>next_token</code> у блок <strong>Target Variable (Цільова змінна)</strong>.</li>
+        </ul>
+    </li>
+    <li><strong>Векторизація тексту:</strong>
+        Використайте віджет <code>Bag of Words</code> або <code>TF-IDF</code> для перетворення текстового контексту на числові вектори частот слів.
+    </li>
+    <li><strong>Навчання класифікатора:</strong>
+        Підключіть моделі <code>Naive Bayes</code> (Наївний Байєс) та <code>Logistic Regression</code> (Логістична регресія).
+    </li>
+    <li><strong>Оцінка якості (Test & Score):</strong>
+        Перевірте точність передбачення моделі за методом крос-валідації (Cross Validation: 5-fold).
+    </li>
+    <li><strong>Інтерактивне передбачення (Predict):</strong>
+        Введіть новий тестовий контекст (наприклад, <em>"штучний інтелект"</em>) та подивіться, яке слово модель виведе з найвищою ймовірністю!
+    </li>
+</ol>
+
+<hr>
+
+<h3>💻 Альтернатива на Python: Простий Trigram-генератор</h3>
+<p>Якщо ви бажаєте реалізувати подібну модель кодом, ось компактний приклад на Python:</p>
+
+<pre><code class="language-python">from collections import defaultdict, Counter
+import random
+
+corpus = "штучний інтелект змінює світ штучний інтелект відкриває нові горизонти штучний інтелект допомагає людям"
+words = corpus.split()
+
+# Створюємо словник триграм: (w1, w2) -> Counter(наступні_слова)
+trigrams = defaultdict(Counter)
+for i in range(len(words) - 2):
+    ctx = (words[i], words[i+1])
+    target = words[i+2]
+    trigrams[ctx][target] += 1
+
+def predict_next_word(w1, w2):
+    candidates = trigrams.get((w1, w2))
+    if not candidates:
+        return None
+    # Обираємо найімовірніше слово
+    return candidates.most_common(1)[0][0]
+
+context = ("штучний", "інтелект")
+predicted = predict_next_word(*context)
+print(f"Контекст: {context} -> Прогноз моделі: '{predicted}'")</code></pre>
+
+<hr>
+
+<div class="alert alert-success">
+    <strong>✅ Висновки та критерії звіту:</strong>
+    <ul class="mb-0">
+        <li><strong>Як розмір контексту впливає на точність:</strong> більший контекст дає точніші передбачення, але вимагає експоненційно більшого обсягу навчальних даних.</li>
+        <li><strong>Зв'язок із сучасними LLM:</strong> моделі сімейства GPT роблять абсолютно те саме, але використовують контекст у тисячі слів та мільярди нейропараметрів у механізмі Attention замість простого підрахунку триграм.</li>
+    </ul>
+</div>

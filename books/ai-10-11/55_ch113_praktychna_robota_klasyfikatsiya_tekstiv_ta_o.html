@@ -1,0 +1,162 @@
+---
+id: 113
+book_id: 3
+course_id: 6
+pagenum: 55
+subchapter: 1
+title: 'Практична робота: Класифікація текстів та оцінка якості моделі в Orange 3'
+hidden: 0
+timemodified: 1794499287
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    <strong>Класифікація текстів (Text Classification)</strong> — це одна з найпоширеніших прикладних задач обробки природної мови (NLP). Вона полягає у віднесенні текстового документа до однієї з попередньо визначених категорій: визначення спаму (Spam / Ham), аналіз тональності відгуків (позитивний / негативний / нейтральний) чи автоматична фільтрація новин за тематиками. У цій роботі ми побудуємо повноцінний класифікатор у середовищі <strong>Orange 3</strong> та детально розберемо ключові метрики якості моделі.
+</p>
+
+<div class="card mb-4 border-primary" style="border-left: 5px solid #007bff; background-color: #f8faff;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-primary mb-2">🎯 Мета роботи:</h5>
+        <ul class="mb-0">
+            <li>Опанувати етапи попередньої обробки природного тексту (Text Preprocessing).</li>
+            <li>Побудувати класифікатор текстів за допомогою методів машинного навчання в <strong>Orange 3 Text</strong>.</li>
+            <li>Навчитися інтерпретувати <strong>матрицю невідповідностей (Confusion Matrix)</strong>.</li>
+            <li>Зрозуміти практичний зміст метрик <strong>Precision (Точність)</strong>, <strong>Recall (Повнота)</strong> та <strong>F1-Score</strong>.</li>
+        </ul>
+    </div>
+</div>
+
+<hr>
+
+<h3>📋 Етап 1. Побудова конвеєра обробки в Orange 3</h3>
+<p>
+    Для роботи з текстом в Orange використовується модуль розширення <strong>Text Add-on</strong>. Робочий процес класифікації складається з послідовних кроків, зображених на схемі:
+</p>
+
+<div class="card my-3 text-center border-light shadow-sm">
+    <div class="card-body p-2">
+        <img src="@@PLUGINFILE@@/Screenshot%202025-05-24%20at%2010.08.59.png" alt="Пайплайн класифікації текстів в Orange 3" class="img-fluid" style="border-radius: 6px; max-width: 100%;">
+        <p class="text-muted small mt-2 mb-0">Схема робочого процесу: Corpus &rarr; Preprocess Text &rarr; Bag of Words &rarr; Навчання моделей &rarr; Test &amp; Score &rarr; Confusion Matrix</p>
+    </div>
+</div>
+
+<ol style="line-height: 1.8;">
+    <li><strong>Corpus (Корпус текстів):</strong> завантаження набору текстових даних із цільовою міткою класу (наприклад, колекція повідомлень, розмічених як <em>spam</em> або <em>ham</em>).</li>
+    <li><strong>Preprocess Text (Попередня обробка):</strong>
+        <ul>
+            <li><strong>Transformation:</strong> переведення всіх літер у нижній регістр (Lowercase).</li>
+            <li><strong>Tokenization:</strong> розбиття суцільного тексту на окремі слова-токени (RegEx або слова за пробілами).</li>
+            <li><strong>Filtering (Stopwords):</strong> видалення шумових слів (прийменників, сполучників, часток), які не несуть смислового навантаження.</li>
+            <li><strong>Normalization:</strong> лематизація або стемінг (зведення слів до їхньої базової словникової форми).</li>
+        </ul>
+    </li>
+    <li><strong>Bag of Words (Мішок слів) / TF-IDF:</strong> перетворення текстових документів на числову матрицю частот використання слів, яку алгоритми машинного навчання можуть обробляти.</li>
+    <li><strong>Моделі машинного навчання:</strong> паралельне підключення алгоритмів <em>Naive Bayes</em> (Наївний Байєс — класичний стандарт для тексту) та <em>Logistic Regression</em> або <em>SVM</em>.</li>
+</ol>
+
+<hr>
+
+<h3>📊 Етап 2. Оцінка моделі: Матриця невідповідностей (Confusion Matrix)</h3>
+<p>
+    Звичайна точність (Accuracy) може бути оманливою, якщо класи незбалансовані (наприклад, 95% листів звичайні і лише 5% — спам). Для детального аудиту помилок використовують <strong>Confusion Matrix</strong>:
+</p>
+
+<div class="card my-3 text-center border-light shadow-sm">
+    <div class="card-body p-2">
+        <img src="@@PLUGINFILE@@/Screenshot%202025-05-24%20at%2010.09.29.png" alt="Confusion Matrix в Orange 3" class="img-fluid" style="border-radius: 6px; max-width: 100%;">
+        <p class="text-muted small mt-2 mb-0">Аналіз прогнозів моделі: порівняння реальних класів (Actual) та спрогнозованих (Predicted)</p>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-sm text-center">
+        <thead class="thead-light">
+            <tr>
+                <th colspan="2" rowspan="2"></th>
+                <th colspan="2">Спрогнозовано моделлю (Predicted)</th>
+            </tr>
+            <tr>
+                <th>Позитивний (Spam)</th>
+                <th>Негативний (Ham)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th rowspan="2" class="align-middle thead-light">Реальний клас (Actual)</th>
+                <td><strong>Позитивний (Spam)</strong></td>
+                <td class="table-success"><strong>True Positive (TP)</strong><br>Влучно виявлений спам</td>
+                <td class="table-danger"><strong>False Negative (FN)</strong><br>Пропущений спам (потрапив у Вхідні)</td>
+            </tr>
+            <tr>
+                <td><strong>Негативний (Ham)</strong></td>
+                <td class="table-warning"><strong>False Positive (FP)</strong><br>Помилкова тривога (важливий лист у Спамі)</td>
+                <td class="table-success"><strong>True Negative (TN)</strong><br>Коректно пропущений звичайний лист</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<hr>
+
+<h3>🎯 Етап 3. Метрики Precision, Recall та F1-Score</h3>
+<p>
+    Віджет <strong>Test &amp; Score</strong> обчислює комплексні метрики якості для кожного класу:
+</p>
+
+<div class="card my-3 text-center border-light shadow-sm">
+    <div class="card-body p-2">
+        <img src="@@PLUGINFILE@@/Screenshot%202025-05-24%20at%2010.09.53.png" alt="Таблиця метрик якості: Precision, Recall, F1" class="img-fluid" style="border-radius: 6px; max-width: 100%;">
+        <p class="text-muted small mt-2 mb-0">Зведена таблиця метрик у віджеті Test &amp; Score</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 border-info">
+            <div class="card-header bg-info text-white font-weight-bold">Precision (Влучність / Точність)</div>
+            <div class="card-body">
+                <div class="text-center font-weight-bold mb-2">TP / (TP + FP)</div>
+                <p class="small mb-0">
+                    Показує, яка частка з усіх об'єктів, які модель назвала «спамом», дійсно є спамом.
+                    <br><br>
+                    <strong>Коли важлива:</strong> коли ціна помилкової тривоги критична (наприклад, щоб важливий робочий лист випадково не видалився як спам).
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 border-warning">
+            <div class="card-header bg-warning text-dark font-weight-bold">Recall (Повнота охоплення)</div>
+            <div class="card-body">
+                <div class="text-center font-weight-bold mb-2">TP / (TP + FN)</div>
+                <p class="small mb-0">
+                    Показує, яку частку від усіх реальних спам-листів зуміла відловити модель.
+                    <br><br>
+                    <strong>Коли важлива:</strong> коли критично не пропустити загрозу (наприклад, виявлення медичних патологій або фішингових атак).
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 border-success">
+            <div class="card-header bg-success text-white font-weight-bold">F1-Score (Гармонійне середнє)</div>
+            <div class="card-body">
+                <div class="text-center font-weight-bold mb-2">2 · (Prec · Rec) / (Prec + Rec)</div>
+                <p class="small mb-0">
+                    Збалансована метрика, що враховує одночасно і точність, і повноту. Вона карає модель, якщо одна з двох метрик дуже низька.
+                    <br><br>
+                    <strong>Головний орієнтир:</strong> для підсумкового порівняння якості різних алгоритмів.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="alert alert-success">
+    <strong>✅ Контрольні запитання для звіту:</strong>
+    <ol class="mb-0">
+        <li>Яка з протестованих моделей (Naive Bayes чи Logistic Regression) показала вищий показник F1-Score?</li>
+        <li>Чому для фільтрації спаму часто важливіше максимізувати Precision, ніж Recall?</li>
+        <li>Як змінюються показники моделі, якщо відключити видалення стоп-слів у віджеті Preprocess Text?</li>
+    </ol>
+</div>

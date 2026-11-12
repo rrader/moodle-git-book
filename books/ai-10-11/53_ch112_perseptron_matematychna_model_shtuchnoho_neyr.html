@@ -1,0 +1,111 @@
+---
+id: 112
+book_id: 3
+course_id: 6
+pagenum: 53
+subchapter: 1
+title: 'Персептрон: Математична модель штучного нейрона'
+hidden: 0
+timemodified: 1794499287
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    <strong>Персептрон (Perceptron)</strong> був розроблений американським психологом та вченим у галузі штучного інтелекту <strong>Френком Розенблаттом у 1957 році</strong> в Корнельській авіаційній лабораторії. Це була перша у світі штучна нейронна мережа, яка навчалася розпізнавати прості візуальні патерни та геометричні фігури. Назва походить від латинського <em>perceptio</em> (сприйняття), оскільки модель спиралася на відкриття біофізики щодо роботи нервових клітин мозку.
+</p>
+
+<div class="card mb-4 border-primary" style="border-left: 5px solid #007bff; background-color: #f8faff;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-primary mb-2">🧠 Аналогія з біологічним нейроном</h5>
+        <p class="card-text mb-0">
+            Штучний персептрон імітує фундаментальний механізм роботи біологічного нейрона: збирання сигналів від сусідніх клітин через відростки, зважене підсумовування та генерація імпульсу («все або нічого») при досягненні порога збудження.
+        </p>
+    </div>
+</div>
+
+<div class="table-responsive my-3">
+    <table class="table table-bordered table-sm text-center">
+        <thead class="thead-light">
+            <tr>
+                <th style="width: 50%;">Біологічний нейрон</th>
+                <th style="width: 50%;">Штучний персептрон (Розенблатта)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Дендрити</strong> (приймають вхідні біоелектричні сигнали)</td>
+                <td><strong>Вхідні канали x₁, x₂, …, xₙ</strong> (числові значення ознак)</td>
+            </tr>
+            <tr>
+                <td><strong>Синапси</strong> (мають різну провідність / силу зв'язку)</td>
+                <td><strong>Синаптичні ваги w₁, w₂, …, wₙ</strong> (коефіцієнти важливості ознак)</td>
+            </tr>
+            <tr>
+                <td><strong>Тіло клітини (Сома)</strong> (сумує потенціали мембрани)</td>
+                <td><strong>Зважений суматор Σ</strong> (обчислення z = Σ xᵢ · wᵢ + b)</td>
+            </tr>
+            <tr>
+                <td><strong>Поріг збудження мембрани</strong> (поріг активації)</td>
+                <td><strong>Зсув (Bias b) та функція активації f(z)</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Аксон</strong> (передає нервовий імпульс далі)</td>
+                <td><strong>Вихідний сигнал y ∈ {0, 1}</strong> (рішення класифікатора)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<hr>
+
+<h3>📐 Математична структура персептрона</h3>
+
+<div class="card my-3 p-3 bg-light border text-center">
+    <div style="font-size: 1.25rem; font-weight: bold; color: #155724;">
+        z = w₁x₁ + w₂x₂ + … + wₙxₙ + b = Σ (wᵢxᵢ) + b
+    </div>
+    <div class="mt-2 text-muted small">
+        де <strong>xᵢ</strong> — входи, <strong>wᵢ</strong> — ваги зв'язків, <strong>b</strong> — зсув (bias), <strong>z</strong> — сумарне збудження нейрона.
+    </div>
+</div>
+
+<h4>Функція активації (Heaviside Step Function)</h4>
+<p>
+    Класичний персептрон Розенблатта використовує <strong>порогову функцію</strong> (ступеневу функцію Гевісайда):
+</p>
+<div class="alert alert-secondary text-center" style="font-size: 1.15rem;">
+    <strong>y = 1, якщо z &ge; 0</strong><br>
+    <strong>y = 0, якщо z &lt; 0</strong>
+</div>
+<p>
+    Якщо зважена сума перевищує поріг — нейрон «активується» (видає 1, наприклад, <em>«об'єкт належить до класу А»</em>), в іншому разі видає 0.
+</p>
+
+<hr>
+
+<h3>🔄 Правило навчання персептрона (Perceptron Learning Rule)</h3>
+<p>
+    Навчання нейрона полягає у поступовому коригуванні ваг за кожним прикладом, де модель помилилася:
+</p>
+<ol style="line-height: 1.8;">
+    <li>Ініціалізувати всі ваги $w_i$ нулями або малими випадковими числами.</li>
+    <li>Для кожного тренувального прикладу $(x, y)$ обчислити прогноз $\hat{y}$.</li>
+    <li>Обчислити помилку: <code>error = y - ŷ</code> (де $y$ — правильна відповідь, а $\hat{y}$ — прогноз).</li>
+    <li>Оновити ваги за формулою:
+        <div class="alert alert-light border my-2 font-weight-bold text-center" style="font-size: 1.1rem;">
+            wᵢ &larr; wᵢ + η · (y - ŷ) · xᵢ
+        </div>
+        де <strong>η (eta)</strong> — швидкість навчання (Learning Rate, наприклад 0.01 або 0.1).
+    </li>
+    <li>Якщо $\hat{y} = y$, помилка дорівнює нулю і ваги не змінюються.</li>
+</ol>
+
+<hr>
+
+<h3>⚠️ Обмеження персептрона: Проблема XOR (1969)</h3>
+<div class="alert alert-warning">
+    <strong>Історичний урок:</strong>
+    <p class="mb-0">
+        У 1969 році видатні математики <strong>Марвін Мінський</strong> та <strong>Сеймур Пейперт</strong> опублікували книгу <em>«Perceptrons»</em>, де математично довели, що один персептрон здатен розділяти лише <strong>лінійно подільні класи</strong> (наприклад, логічні операції AND та OR). Просту нелінійну функцію <strong>XOR (виключне АБО)</strong> один персептрон розв'язати не міг!
+        <br><br>
+        Це відкриття спричинило першу «Зиму штучного інтелекту» (AI Winter), яка тривала понад 10 років, доки не були винайдені <strong>багатошарові персептрони (MLP)</strong> та алгоритм зворотного поширення помилки (Backpropagation).
+    </p>
+</div>

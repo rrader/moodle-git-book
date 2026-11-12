@@ -1,0 +1,82 @@
+---
+id: 40
+book_id: 3
+course_id: 6
+pagenum: 27
+subchapter: 1
+title: 'Самостійна робота: Підрахунок об''єктів за кольором та площею (OpenCV)'
+hidden: 0
+timemodified: 1794499287
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    У цьому самостійному практичному завданні ми розробимо алгоритм комп'ютерного зору для <strong>автоматичного підрахунку кількості риб</strong> на підводному зображенні, поєднуючи фільтрацію за кольором у просторі <strong>HSV</strong> та геометричну селекцію за площею контуру (<code>contourArea</code>).
+</p>
+
+<div class="card my-3 text-center border-light shadow-sm">
+    <div class="card-body p-2">
+        <img src="@@PLUGINFILE@@/fish.png" alt="Підводне фото для підрахунку риб" class="img-fluid" style="border-radius: 6px; max-width: 100%;">
+    </div>
+</div>
+
+<hr>
+
+<h3>🛠 Ключові етапи реалізації алгоритму:</h3>
+
+<h4>1. Сегментація за кольором у просторі HSV</h4>
+<p>
+    Простір <strong>HSV (Hue, Saturation, Value)</strong> набагато стійкіший до коливань освітленості під водою, ніж звичайний RGB/BGR. Виділимо помаранчевий колір риб за допомогою маски діапазону <code>cv2.inRange()</code>:
+</p>
+
+<pre><code class="language-python">import cv2
+import numpy as np
+
+# 1. Зчитуємо зображення
+img = cv2.imread('fish.jpg')
+
+# 2. Конвертуємо зображення з BGR у HSV
+hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+# 3. Визначаємо помаранчевий діапазон:
+# H: 10-20 для помаранчевого відтінку
+# S: 100-255 щоб відсіяти бліді кольори
+# V: 100-255 щоб відсіяти темні тіні
+lower_orange = np.array([10, 100, 100])
+upper_orange = np.array([20, 255, 255])
+
+# Створюємо бінарну маску
+mask = cv2.inRange(hsv, lower_orange, upper_orange)</code></pre>
+
+<h4>2. Фільтрація знайдених контурів за площею (cv2.contourArea)</h4>
+<p>
+    На бінарній масці можуть з'явитися дрібні шумові цятки або великі фонові плями. Щоб врахувати виключно риб, ми фільтруємо контури за мінімальним та максимальним розміром:
+</p>
+
+<pre><code class="language-python"># 4. Знаходимо зовнішні контури
+contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# 5. Фільтруємо контури за площею
+MIN_AREA = 500   # мінімальна площа контуру риби
+MAX_AREA = 5000  # максимальна площа
+
+valid_fish_contours = []
+for contour in contours:
+    area = cv2.contourArea(contour)
+    if MIN_AREA &lt; area &lt; MAX_AREA:
+        valid_fish_contours.append(contour)
+
+fish_count = len(valid_fish_contours)
+print(f"Кількість виявлених риб: {fish_count}")</code></pre>
+
+<hr>
+
+<div class="card bg-light border-primary my-3">
+    <div class="card-body">
+        <h5 class="card-title font-weight-bold">🧪 Інтерактивне тестування в AI Lab Sandbox</h5>
+        <p class="card-text mb-2">
+            Ви можете протестувати та підібрати порогові значення кольору й площі онлайн прямо у веб-пісочниці:
+        </p>
+        <a href="https://www.rmn.pp.ua/ai-lab-sandbox/#" target="_blank" rel="noopener" class="btn btn-sm btn-primary font-weight-bold">
+            Відкрити завдання у пісочниці ai-lab-sandbox ↗
+        </a>
+    </div>
+</div>
