@@ -1,0 +1,147 @@
+---
+id: 122
+book_id: 3
+course_id: 6
+pagenum: 35
+subchapter: 1
+title: 'Практична робота: Створення експертної системи на Prolog (Детектив)'
+hidden: 0
+timemodified: 1794496732
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    У цій практичній роботі ми познайомимося із <strong>символьним штучним інтелектом (Symbolic AI)</strong> та мовою логічного програмування <strong>Prolog</strong>. Ми створимо повноцінну експертну систему у вигляді детективного розслідування <em>«Таємниця зниклого трофея»</em>, навчимося формулювати факти, логічні правила та знаходити винного за допомогою механізму логічного виводу.
+</p>
+
+<div class="card mb-4 border-primary" style="border-left: 5px solid #007bff; background-color: #f8faff;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-primary mb-2">🌐 Робоче онлайн-середовище</h5>
+        <p class="card-text mb-2">Для виконання роботи не потрібно встановлювати локальне ПЗ — скористайтеся офіційним веб-інтерпретатором SWI-Prolog:</p>
+        <a href="https://swish.swi-prolog.org/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary font-weight-bold">
+            Відкрити SWISH (SWI-Prolog for Web) ↗
+        </a>
+    </div>
+</div>
+
+<h3>🎯 Мета роботи:</h3>
+<ul>
+    <li>Ознайомитися з декларативною парадигмою логічного програмування.</li>
+    <li>Навчитися створювати базу знань (факти та предикати).</li>
+    <li>Розробити правила логічного виводу (імплікація <code>:-</code>, кон'юнкція <code>,</code> та заперечення <code>\+</code>).</li>
+    <li>Сформулювати запити до бази знань для автоматичного розкриття злочину.</li>
+</ul>
+
+<hr>
+
+<h3>🕵️ Фабула розслідування: «Таємниця зниклого трофея»</h3>
+<p>
+    Це був тихий вечір у міському центрі громади, де щойно завершився щорічний конкурс талантів. Бажаний <strong>Золотий трофей</strong> стояв на подіумі, сяючи під прожекторами. Але коли гості розійшлися, а світло згасло, трофей зник!
+</p>
+<p>
+    Детектив Пролог встановив залізне правило розслідування:
+</p>
+<div class="alert alert-warning text-center" style="font-size: 1.1rem;">
+    <strong>Злодієм (guilty) міг бути лише той підозрюваний (suspect), який перебував біля подіуму (closer), мав мотив (motive) і не має підтвердженого алібі (\+ alibi)!</strong>
+</div>
+
+<h4>Свідчення та зібрані докази:</h4>
+<ol>
+    <li><strong>Джордан (Jordan):</strong> шанована особа громади, на місці злочину не помічений.</li>
+    <li><strong>Кріс (Chris):</strong> батько двох учасників, пішов раніше готувати частування.</li>
+    <li><strong>Алекс (Alex):</strong> брав участь у конкурсі, але не переміг. Був біля самого подіуму незадовго до зникнення трофея. Має мотив (образа через програш). Бачив Блейка.</li>
+    <li><strong>Блейк (Blake):</strong> брат Алекса. Виходив робити фото, бачив як заходила Кейсі. <strong>Має залізне алібі.</strong></li>
+    <li><strong>Кейсі (Casey):</strong> велика фанатка кубків та нагород, хотіла поповнити власну колекцію (мотив). Була біля подіуму. <strong>Проте має алібі (була в кафе зі свідками).</strong></li>
+    <li><strong>Сем (Sam) та Тейлор (Taylor):</strong> діти, гралися біля сцени, відношення до злочину не мають.</li>
+</ol>
+
+<hr>
+
+<h3>💻 Програмна реалізація в SWI-Prolog</h3>
+
+<h4>Крок 1. Створення бази фактів (Facts)</h4>
+<p>У лівій панелі редактора <strong>SWISH</strong> запишемо факти про людей, їхнє місцезнаходження, свідчення, мотиви та алібі:</p>
+
+<pre><code class="language-prolog">% --- База фактів: Люди ---
+person(jordan).
+person(chris).
+person(alex).
+person(blake).
+person(casey).
+person(sam).
+person(taylor).
+
+% --- Хто був помічений поруч із подіумом (місце злочину) ---
+closer(alex).
+closer(casey).
+
+% --- Свідчення: хто кого бачив ---
+see(alex, blake).
+see(blake, casey).
+
+% --- Хто мав мотив викрасти трофей ---
+motive(alex).
+motive(casey).
+
+% --- Хто має підтверджене алібі ---
+alibi(blake).
+alibi(casey).</code></pre>
+
+<h4>Крок 2. Формулювання логічних правил (Rules)</h4>
+<p>Додайте правила логічного виводу, що описують зв'язок між фактами:</p>
+
+<pre><code class="language-prolog">% Підозрюваний: людина, яка була біля подіуму ТА мала мотив
+suspect(X) :- 
+    person(X), 
+    motive(X), 
+    closer(X).
+
+% Свідок: людина, яка бачила будь-кого іншого
+witness(X) :- 
+    person(X), 
+    see(X, _).
+
+% Винний: підозрюваний, у якого ВІДСУТНЄ алібі (\+ означає логічне заперечення "NOT")
+guilty(X) :- 
+    suspect(X), 
+    \+ alibi(X).</code></pre>
+
+<h4>Крок 3. Виконання запитів (Queries) у SWISH</h4>
+<p>У правій нижній панелі введення запитів (зі знаком <code>?-</code>) протестуйте систему:</p>
+
+<ol>
+    <li>
+        <strong>Хто є підозрюваними у справі?</strong>
+        <pre><code class="language-prolog">?- suspect(X).</code></pre>
+        <em>Очікувана відповідь Prolog:</em> <code>X = alex</code> ; <code>X = casey</code>.
+    </li>
+    <li>
+        <strong>Хто виступає свідками?</strong>
+        <pre><code class="language-prolog">?- witness(X).</code></pre>
+        <em>Очікувана відповідь Prolog:</em> <code>X = alex</code> ; <code>X = blake</code>.
+    </li>
+    <li>
+        <strong>Хто є справжнім злодієм?</strong>
+        <pre><code class="language-prolog">?- guilty(X).</code></pre>
+        <em>Очікувана відповідь Prolog:</em> <code>X = alex.</code><br>
+        (Кейсі виключається, оскільки правило <code>\+ alibi(casey)</code> повертає <code>false</code>).
+    </li>
+</ol>
+
+<hr>
+
+<h3>🌟 Творче індивідуальне завдання:</h3>
+<p>Розширте створену базу знань одним із наступних сюжетних поворотів на вибір:</p>
+<ul>
+    <li>Додайте камеру відеоспостереження: факт <code>camera_record(Person, Time)</code> та правило, що спростовує алібі.</li>
+    <li>Створіть відбитки пальців на склі кубка: <code>fingerprint(alex, cup)</code>.</li>
+    <li>Створіть сюжетний ланцюжок співучасника: <code>accomplice(X, Y) :- guilty(X), witness(Y), ...</code></li>
+</ul>
+
+<div class="card bg-light mt-4">
+    <div class="card-body">
+        <h5 class="card-title">📦 Додаткові матеріали курсу</h5>
+        <p class="card-text">
+            Готовий архів із прикладами коду на SWI-Prolog для локального запуску можна завантажити у сховищі матеріалів курсу:
+            <code>examples/prolog-example.zip</code>.
+        </p>
+    </div>
+</div>

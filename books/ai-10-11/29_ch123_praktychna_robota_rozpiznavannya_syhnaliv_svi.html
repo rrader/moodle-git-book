@@ -1,0 +1,164 @@
+---
+id: 123
+book_id: 3
+course_id: 6
+pagenum: 29
+subchapter: 1
+title: 'Практична робота: Розпізнавання сигналів світлофора (HSV-фільтрація)'
+hidden: 0
+timemodified: 1794496742
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    У цій практичній роботі ми створимо модуль комп'ютерного зору для безпілотного автомобіля (Self-Driving Car) — <strong>алгоритм розпізнавання та класифікації сигналів світлофора</strong> на базі бібліотек <code>OpenCV</code> та <code>NumPy</code> у кольоровому просторі <strong>HSV</strong>.
+</p>
+
+<div class="card mb-4 border-success" style="border-left: 5px solid #28a745; background-color: #f7fdf9;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-success mb-2">🚗 Контекст інженерної задачі</h5>
+        <p class="card-text mb-0">
+            Безпілотний автомобіль повинен у реальному часі сприймати сигнали світлофорів незалежно від часу доби, сонячних відблисків та погодних умов. Для надійної сегментації кольорів у комп'ютерному зорі замість звичного RGB використовують простір <strong>HSV (Hue, Saturation, Value)</strong>.
+        </p>
+    </div>
+</div>
+
+<h3>🎯 Мета роботи:</h3>
+<ul>
+    <li>Навчитися конвертувати зображення з колірного простору BGR у <strong>HSV</strong>.</li>
+    <li>Зрозуміти особливість «кільцевого» спектра червоного кольору в просторі Hue та об'єднувати бітові маски через <code>cv2.bitwise_or</code>.</li>
+    <li>Застосувати морфологічну фільтрацію шуму (<code>cv2.morphologyEx</code>).</li>
+    <li>Розробити модуль прийняття рішень для системи автопілота: <code>STOP</code> (Червоний), <code>READY</code> (Жовтий) та <code>GO</code> (Зелений).</li>
+</ul>
+
+<hr>
+
+<h3>🌈 Чому саме HSV для дорожніх умов?</h3>
+<p>
+    У звичайній колірній моделі RGB зміна освітленості (наприклад, яскраве сонце або сутінки) одночасно змінює всі три канали R, G і B. Це ускладнює налаштування фіксованих порогових значень.
+</p>
+<p>
+    Простір <strong>HSV</strong> розділяє візуальну інформацію на три незалежні складові:
+</p>
+<ul>
+    <li><strong>Hue (Тон, відтінок):</strong> чистий колір по колу від 0° до 360° (в OpenCV масштабується в діапазон $0 \dots 179$).</li>
+    <li><strong>Saturation (Насиченість):</strong> глибина кольору ($0 \dots 255$).</li>
+    <li><strong>Value (Яскравість):</strong> освітленість ($0 \dots 255$).</li>
+</ul>
+
+<div class="alert alert-warning">
+    <strong>⚠️ Важлива інженерна деталь: Специфіка червоного кольору в HSV</strong>
+    <p class="mb-0">
+        У колірному колі червоний колір розташований на стику 0° та 180°! Тому для надійного виявлення червоного кольору в OpenCV необхідно створити <strong>два окремі діапазони</strong> та об'єднати їх логічним АБО:
+        <br>
+        1) <code>lower_red1 = [0, 100, 100]</code> ... <code>upper_red1 = [10, 255, 255]</code>
+        <br>
+        2) <code>lower_red2 = [160, 100, 100]</code> ... <code>upper_red2 = [179, 255, 255]</code>
+    </p>
+</div>
+
+<hr>
+
+<h3>💻 Покроковий код розпізнавання світлофора</h3>
+
+<pre><code class="language-python">import cv2
+import numpy as np
+
+def detect_traffic_light_state(image_bgr):
+    """
+    Визначає стан світлофора: RED, YELLOW, GREEN або UNKNOWN
+    """
+    # 1. Конвертуємо зображення в колірний простір HSV
+    hsv = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2HSV)
+
+    # 2. Визначаємо діапазони кольорів у HSV
+    # Червоний (дві маски через обгортання кола)
+    lower_red1 = np.array([0, 120, 100])
+    upper_red1 = np.array([10, 255, 255])
+    lower_red2 = np.array([160, 120, 100])
+    upper_red2 = np.array([179, 255, 255])
+
+    mask_red1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask_red2 = cv2.inRange(hsv, lower_red2, upper_red2)
+    mask_red = cv2.bitwise_or(mask_red1, mask_red2)
+
+    # Жовтий (Hue приблизно 15..35)
+    lower_yellow = np.array([15, 120, 100])
+    upper_yellow = np.array([35, 255, 255])
+    mask_yellow = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+    # Зелений (Hue приблизно 40..90)
+    lower_green = np.array([40, 100, 100])
+    upper_green = np.array([90, 255, 255])
+    mask_green = cv2.inRange(hsv, lower_green, upper_green)
+
+    # 3. Морфологічне очищення від випадкового шуму (Morphological Opening)
+    kernel = np.ones((5, 5), np.uint8)
+    mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_OPEN, kernel)
+    mask_yellow = cv2.morphologyEx(mask_yellow, cv2.MORPH_OPEN, kernel)
+    mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_OPEN, kernel)
+
+    # 4. Підрахунок активних пікселів для кожного кольору
+    red_count = cv2.countNonZero(mask_red)
+    yellow_count = cv2.countNonZero(mask_yellow)
+    green_count = cv2.countNonZero(mask_green)
+
+    counts = {
+        "RED": red_count,
+        "YELLOW": yellow_count,
+        "GREEN": green_count
+    }
+
+    dominant_color = max(counts, key=counts.get)
+    max_pixels = counts[dominant_color]
+
+    # Мінімальний поріг для впевненого спрацьовування
+    MIN_PIXEL_THRESHOLD = 150
+
+    if max_pixels < MIN_PIXEL_THRESHOLD:
+        return "UNKNOWN / OFF", counts, None
+
+    # Рішення для автопілота
+    actions = {
+        "RED": "🛑 STOP (Зупинка)",
+        "YELLOW": "⚠️ READY / CAUTION (Увага)",
+        "GREEN": "🟢 GO (Рух дозволено)"
+    }
+
+    return actions[dominant_color], counts, (mask_red, mask_yellow, mask_green)
+
+# Демонстраційний запуск на тестовому зображенні
+if __name__ == "__main__":
+    # Завантажуємо зображення світлофора (traffic_light.jpg)
+    img = cv2.imread("traffic_light.jpg")
+    if img is not None:
+        action, stats, _ = detect_traffic_light_state(img)
+        print(f"Система автопілота: {action}")
+        print(f"Статистика пікселів: {stats}")
+    else:
+        print("Зображення не знайдено, запустіть скрипт із фотографією світлофора!")</code></pre>
+
+<hr>
+
+<h3>📊 Датасет для практичних експериментів</h3>
+<p>
+    Для тестування розробленого алгоритму на реальних дорожніх фотографіях завантажте датасет із платформи Kaggle:
+</p>
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">📁 Traffic Light Detection Dataset (Kaggle)</h5>
+        <p class="card-text">
+            Колекція зображень дорожніх світлофорів із розміткою станів для тренування та тестування систем автономного водіння:
+        </p>
+        <a href="https://www.kaggle.com/datasets/wjybuqi/traffic-light-detection-dataset" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm font-weight-bold">
+            Перейти до датасету на Kaggle ↗
+        </a>
+    </div>
+</div>
+
+<div class="alert alert-success">
+    <strong>✅ Завдання для самостійної здачі:</strong>
+    <ol class="mb-0">
+        <li>Завантажте щонайменше 3 фотографії світлофора з різними увімкненими сигналами (червоний, жовтий, зелений).</li>
+        <li>Пропустіть зображення крізь розроблений конвеєр обробки.</li>
+        <li>Збережіть результуючі кадри, на яких поверх світлофора нанесено кольоровий прямокутник (bounding box) та текстову команду <code>STOP / GO</code> за допомогою <code>cv2.putText()</code>.</li>
+    </ol>
+</div>

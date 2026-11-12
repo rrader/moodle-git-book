@@ -1,0 +1,229 @@
+---
+id: 121
+book_id: 3
+course_id: 6
+pagenum: 44
+subchapter: 1
+title: 'Практична робота: Поліноміальна регресія та дослідження перенавчання'
+hidden: 0
+timemodified: 1794496725
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    У цій практичній роботі ми розширимо створений раніше застосунок для прогнозування вартості житла: реалізуємо <strong>поліноміальну регресію (Polynomial Regression)</strong>, дослідимо явище <strong>перенавчання (Overfitting)</strong> та <strong>недонавчання (Underfitting)</strong>, а також порівняємо середньоквадратичну помилку (MSE) моделі на тренувальній та тестовій вибірках при зміні складності моделі.
+</p>
+
+<div class="card mb-4 border-warning" style="border-left: 5px solid #ffc107; background-color: #fffdf5;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-dark mb-2">💡 Концепція дослідження</h5>
+        <p class="card-text mb-0">
+            Чи завжди складніша модель є кращою? Ми на практиці побачимо, як модель високого степеня може показати майже ідеальну точність на даних, які вона бачила під час тренування, але повністю схибити на нових даних, які бачить уперше.
+        </p>
+    </div>
+</div>
+
+<h3>🎯 Мета роботи:</h3>
+<ul>
+    <li>Навчитися генерувати нелінійні ознаки за допомогою <code>PolynomialFeatures</code> з бібліотеки <code>scikit-learn</code>.</li>
+    <li>Побудувати та порівняти лінійну модель (степінь 1) з поліноміальними моделями вищих степенів.</li>
+    <li>Обчислити та порівняти <strong>Train MSE</strong> та <strong>Test MSE</strong> для різних степенів полінома.</li>
+    <li>Наочно візуалізувати криві перенавчання (Overfitting) та визначити оптимальний ступінь складності моделі.</li>
+</ul>
+
+<hr>
+
+<h3>📐 Теоретичні відомості: Поліноміальна регресія та явище Overfitting</h3>
+
+<h4>1. Математична модель</h4>
+<p>
+    Якщо зв'язок між ознакою $x$ та цільовим значенням $y$ не є строго прямолінійним, звичайна лінійна пряма призводить до <strong>недонавчання (Underfitting)</strong>. Щоб уловити вигини та складніші залежності, використовують поліноміальну функцію:
+</p>
+<div class="alert alert-secondary text-center" style="font-size: 1.15rem;">
+    <strong>ŷ = b₀ + b₁x + b₂x² + b₃x³ + … + bₖxᵏ</strong>
+</div>
+<p>
+    де $k$ — степінь полінома (Degree). При $k = 1$ модель збігається зі звичайною лінійною регресією.
+</p>
+
+<h4>2. Перенавчання (Overfitting) проти Недонавчання (Underfitting)</h4>
+<ul>
+    <li><strong>Недонавчання (Underfitting / High Bias):</strong> модель занадто проста (наприклад, пряма лінія на складній хвилястій кривій). І на Train, і на Test помилка MSE залишається високою.</li>
+    <li><strong>Оптимальний баланс (Good Fit):</strong> модель захоплює загальний тренд даних, не підлаштовуючись під випадковий шум. MSE на Test вибірці мінімальна.</li>
+    <li><strong>Перенавчання (Overfitting / High Variance):</strong> степінь полінома занадто великий (наприклад, $k \ge 8$). Крива починає буквально «з'єднувати точки» і шалено коливатися. На тренувальних даних помилка стрімко падає до нуля (<strong>Train MSE &darr;</strong>), але на нових тестових даних помилка катастрофічно зростає (<strong>Test MSE &uarr;&uarr;</strong>).</li>
+</ul>
+
+<hr>
+
+<h3>📋 Покроковий порядок виконання роботи:</h3>
+
+<h4>Крок 1. Оновлення коду застосунку (<code>python/p1.py</code>)</h4>
+<p>
+    Внесіть зміни у ваш файл <code>python/p1.py</code>. Додайте можливість вибору степеня полінома через інтерактивний слайдер та відображення формули з навченими коефіцієнтами:
+</p>
+
+<pre><code class="language-python">import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import mean_squared_error
+
+st.set_page_config(page_title="Лінійна та Поліноміальна регресія", layout="wide")
+
+st.title("📈 Дослідження поліноміальної регресії та перенавчання (Overfitting)")
+st.write("Порівняння моделей різної складності на наборі California Housing за метрикою MSE.")
+
+@st.cache_data
+def load_data():
+    housing = fetch_california_housing(as_frame=True)
+    return housing.frame
+
+df = load_data()
+
+st.sidebar.header("⚙️ Параметри моделі")
+degree = st.sidebar.slider("Степінь полінома (Degree):", min_value=1, max_value=10, value=2, step=1)
+test_size = st.sidebar.slider("Частка тестової вибірки (Test Size):", 0.1, 0.4, 0.2, 0.05)
+seed = 42
+
+X = df[['MedInc']]
+y = df['MedHouseVal']
+
+# Поділ даних (суворо однаковий для всіх моделей!)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=test_size, random_state=seed
+)
+
+# Побудова пайплайну: генерація степенів ознаки + лінійний регресор
+poly_model = make_pipeline(
+    PolynomialFeatures(degree=degree, include_bias=False),
+    LinearRegression()
+)
+
+# Навчання строго на тренувальній вибірці
+poly_model.fit(X_train, y_train)
+
+# Прогнозування
+y_train_pred = poly_model.predict(X_train)
+y_test_pred = poly_model.predict(X_test)
+
+# Оцінка помилки MSE
+mse_train = mean_squared_error(y_train, y_train_pred)
+mse_test = mean_squared_error(y_test, y_test_pred)
+
+# Формування тексту формули
+lin_reg = poly_model.named_steps['linearregression']
+intercept = lin_reg.intercept_
+coefs = lin_reg.coef_
+
+formula_terms = [f"{intercept:.3f}"]
+for i, c in enumerate(coefs, start=1):
+    sign = "+" if c >= 0 else "-"
+    term = f"x^{i}" if i > 1 else "x"
+    formula_terms.append(f"{sign} {abs(c):.3f}·{term}")
+formula_str = " ".join(formula_terms)
+
+# Виведення метрик
+st.subheader(f"📊 Результати для степеня k = {degree}")
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric("Степінь моделі (Degree):", f"{degree}")
+with col2:
+    st.metric("Train MSE (помилка навчання):", f"{mse_train:.4f}")
+with col3:
+    delta_val = mse_test - mse_train
+    st.metric("Test MSE (помилка тестування):", f"{mse_test:.4f}", delta=f"{delta_val:+.4f}", delta_color="inverse")
+
+st.info(f"📐 **Формула навченої моделі:** `ŷ = {formula_str}`")
+
+# Висновок про стан моделі
+if degree == 1:
+    st.warning("⚠️ **Степінь 1 (Лінійна модель):** Може спостерігатися легке недонавчання (Underfitting), оскільки залежність має слабку кривизну.")
+elif degree in [2, 3]:
+    st.success("✅ **Степінь 2–3 (Оптимальний діапазон):** Модель вловлює вигин тренду, Test MSE стабільно низький.")
+else:
+    st.error("🚨 **Високий степінь (Ризик Overfitting):** Зверніть увагу на зміну Test MSE! Якщо Test MSE суттєво зростає, модель перенавчилася на шумі.")
+
+# Візуалізація кривої регресії
+st.subheader("📉 Порівняння лінії моделі з реальними даними")
+fig, ax = plt.subplots(figsize=(10, 5))
+
+# Точки тестової вибірки
+sample_idx = np.random.choice(len(X_test), size=min(300, len(X_test)), replace=False)
+ax.scatter(X_test.iloc[sample_idx], y_test.iloc[sample_idx], alpha=0.35, color="steelblue", label="Тестові точки (Test)")
+
+# Плавна лінія прогнозу
+x_dense = np.linspace(X['MedInc'].min(), X['MedInc'].max(), 300).reshape(-1, 1)
+x_dense_df = pd.DataFrame(x_dense, columns=['MedInc'])
+y_dense = poly_model.predict(x_dense_df)
+
+curve_color = "red" if degree > 4 else "darkorange"
+ax.plot(x_dense, y_dense, color=curve_color, linewidth=2.5, label=f"Поліном (степінь {degree})")
+
+ax.set_ylim(-0.5, y.max() + 1.0)
+ax.set_xlabel("MedInc (середній дохід)")
+ax.set_ylabel("MedHouseVal (вартість житла)")
+ax.set_title(f"Поліноміальна регресія (Degree = {degree})")
+ax.legend()
+ax.grid(True, linestyle="--", alpha=0.4)
+
+st.pyplot(fig)</code></pre>
+
+<h4>Крок 2. Проведення експерименту та аналіз результатів</h4>
+<p>
+    Змінюйте значення слайдера <strong>Degree</strong> від 1 до 10 та зафіксуйте у таблиці показники:
+</p>
+<table class="table table-bordered table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Степінь (Degree)</th>
+            <th>Train MSE</th>
+            <th>Test MSE</th>
+            <th>Різниця (Test - Train)</th>
+            <th>Діагноз моделі</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>1</strong> (Лінійна)</td>
+            <td>≈ 0.70</td>
+            <td>≈ 0.71</td>
+            <td>Мінімальна</td>
+            <td>Underfitting (недонавчання)</td>
+        </tr>
+        <tr>
+            <td><strong>2 – 3</strong> (Квадратична/Кубічна)</td>
+            <td>≈ 0.65</td>
+            <td>≈ 0.65</td>
+            <td>Мінімальна</td>
+            <td><strong>Optimal Fit (найкращий баланс)</strong></td>
+        </tr>
+        <tr>
+            <td><strong>8 – 10</strong> (Високий степінь)</td>
+            <td>Зменшується (≈ 0.60)</td>
+            <td>Різко зростає (&gt; 0.75 або викиди)</td>
+            <td>Велика додатна різниця</td>
+            <td><strong>Overfitting (перенавчання)</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="alert alert-info">
+    <strong>💡 Ключовий висновок для інженера ШІ:</strong>
+    <p class="mb-0">
+        Ніколи не можна оцінювати якість моделі виключно за показниками тренувальних даних (Train MSE). Здатність моделі коректно узагальнювати правила на раніше не бачених даних перевіряється <strong>виключно на тестовій вибірці (Test MSE)</strong>!
+    </p>
+</div>
+
+<h4>Крок 3. Публікація та здача роботи</h4>
+<ol>
+    <li>Переконайтеся, що файл <code>p1.html</code> коректно завантажує оновлений <code>p1.py</code>.</li>
+    <li>Закомітьте та надішліть зміни на GitHub Pages:
+        <pre><code class="language-bash">git commit -am "feat: додано поліноміальну регресію та аналіз перенавчання"
+git push origin main</code></pre>
+    </li>
+    <li>Надішліть посилання на працюючу сторінку у Moodle.</li>
+</ol>
