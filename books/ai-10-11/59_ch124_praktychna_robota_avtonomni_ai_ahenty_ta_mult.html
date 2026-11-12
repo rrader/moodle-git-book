@@ -1,0 +1,133 @@
+---
+id: 124
+book_id: 3
+course_id: 6
+pagenum: 59
+subchapter: 1
+title: 'Практична робота: Автономні AI-агенти та мультиагентні системи (Agentflows
+  / n8n)'
+hidden: 0
+timemodified: 1794498768
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    <strong>Автономні AI-агенти (AI Agents)</strong> — це наступний якісний стрибок у розвитку штучного інтелекту після звичайних чат-ботів. Якщо класична мовна модель лише генерує текст, то AI-агент здатний <em>ставити собі підцілі, планувати дії, використовувати зовнішні інструменти (Tools & APIs) та самостійно вирішувати комплексні завдання</em>. У цій практичній роботі ми навчимося проєктувати агентні пайплайни за допомогою <strong>Flowise Agentflows</strong> та сервісу автоматизації <strong>n8n</strong>.
+</p>
+
+<div class="card mb-4 border-warning" style="border-left: 5px solid #ffc107; background-color: #fffdf5;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-dark mb-2">🤖 Формула сучасного AI-агента</h5>
+        <p class="card-text mb-0 font-weight-bold" style="font-size: 1.15rem;">
+            Agent = LLM (Мозок) + Memory (Пам'ять) + Planning (Планування / ReAct) + Tools (Інструменти & API)
+        </p>
+    </div>
+</div>
+
+<h3>🎯 Мета роботи:</h3>
+<ul>
+    <li>Зрозуміти принципову різницю між статичною мовною моделлю, RAG та автономним агентом.</li>
+    <li>Ознайомитися з парадигмою міркування <strong>ReAct (Reasoning + Acting)</strong>.</li>
+    <li>Створити інтерактивного агента з інструментами у <strong>Flowise Agentflows</strong>.</li>
+    <li>Побудувати автоматизований робочий процес із ШІ-вузлами в системі <strong>n8n</strong>.</li>
+    <li>Дослідити принципи побудови <strong>мультиагентних систем (Multi-Agent Systems)</strong>.</li>
+</ul>
+
+<hr>
+
+<h3>🧩 Чим агент відрізняється від чат-бота?</h3>
+<div class="table-responsive">
+    <table class="table table-bordered table-sm">
+        <thead class="thead-light">
+            <tr>
+                <th>Характеристика</th>
+                <th>Звичайний LLM Чат-бот</th>
+                <th>RAG-система</th>
+                <th>Автономний AI-Агент (Agentflow)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Джерело знань</strong></td>
+                <td>Фіксована навчальна вибірка</td>
+                <td>Векторна база документів</td>
+                <td>База знань + живі зовнішні API та інструменти</td>
+            </tr>
+            <tr>
+                <td><strong>Здатність діяти</strong></td>
+                <td>Лише текстові відповіді</td>
+                <td>Відповіді з цитуванням джерел</td>
+                <td>Викликає функції, робить запити до серверів, пише та виконує код</td>
+            </tr>
+            <tr>
+                <td><strong>Прийняття рішень</strong></td>
+                <td>Однокроковий вивід токенів</td>
+                <td>Однокроковий пошук + вивід</td>
+                <td>Багатокроковий цикл: <em>Thought &rarr; Action &rarr; Observation</em> до досягнення мети</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<hr>
+
+<h3>📋 Практична частина 1: Створення агента з інструментами у Flowise</h3>
+<p>
+    Відкрийте середовище <a href="https://flowise.rmn.pp.ua/" target="_blank" rel="noopener">Flowise</a> та створіть новий <strong>Agentflow / Multi-Agent</strong>:
+</p>
+
+<ol style="line-height: 1.8;">
+    <li><strong>Вибір ядра агента:</strong> додайте вузол <em>OpenAI Function Agent</em> або <em>ReAct Agent</em> на базі сучасної моделі <code>gpt-4o-mini</code>.</li>
+    <li><strong>Підключення інструментів (Tools):</strong>
+        <ul>
+            <li><strong>Calculator:</strong> точні математичні та геометричні обчислення без помилок округлення.</li>
+            <li><strong>Web Search (SerpAPI / Tavily):</strong> пошук актуальної інформації в реальному часі.</li>
+            <li><strong>Custom Tool:</strong> створення власної функції на JavaScript/Python (наприклад, перевірка погоди за містом або конвертація валют).</li>
+        </ul>
+    </li>
+    <li><strong>Тестовий кейс детективного міркування:</strong> надішліть агенту складне сюжетне завдання, яке вимагає кількох послідовних розрахунків (наприклад, визначення кінцевих координат за азимутами та відстанями).
+        <br>
+        <em>Поспостерігайте в логах Flowise, як агент спочатку розмірковує (Thought), обирає інструмент (Action: Calculator), отримує точне число (Observation) і лише потім формулює остаточний висновок.</em>
+    </li>
+</ol>
+
+<hr>
+
+<h3>⚡ Практична частина 2: Автоматизація робочих процесів у n8n</h3>
+<p>
+    <strong>n8n</strong> — це професійна платформа для оркестрації та автоматизації робочих процесів із нативною підтримкою LangChain та AI-агентів.
+</p>
+<p>
+    Створіть у <a href="https://n8n.rmn.pp.ua/" target="_blank" rel="noopener">n8n</a> робочий сценарій наступної архітектури:
+</p>
+
+<div class="alert alert-secondary text-center font-weight-bold" style="font-size: 1.05rem;">
+    [ Webhook / Telegram Trigger ] &rarr; [ AI Agent Node ] &rarr; [ Tool: Google Sheets / Weather API ] &rarr; [ Response to User ]
+</div>
+
+<ol>
+    <li>Додайте вузол <strong>Telegram Trigger</strong> (або звичайний Webhook для вебформи).</li>
+    <li>Підключіть вузол <strong>AI Agent</strong>, налаштувавши системний промпт та підключивши пам'ять <em>Window Buffer Memory</em>.</li>
+    <li>Додайте до агента інструмент <strong>HTTP Request</strong> або готовий модуль (наприклад, додавання запису до таблиці чи пошук статусу замовлення).</li>
+    <li>Протестуйте сценарій, відправивши повідомлення, та перевірте успішне виконання в журналі (Execution Log).</li>
+</ol>
+
+<hr>
+
+<h3>👥 Практична частина 3: Мультиагентні системи (Multi-Agent Systems)</h3>
+<p>
+    Коли завдання стає надто комплексним для одного агента, створюють команду спеціалізованих агентів із чітким розподілом ролей:
+</p>
+<ul>
+    <li><strong>Supervisor (Координатор):</strong> аналізує загальний запит користувача, розбиває його на підзадачі та призначає відповідним воркерам.</li>
+    <li><strong>Researcher (Дослідник):</strong> здійснює пошук фактів, читає статті та документацію.</li>
+    <li><strong>Coder (Інженер):</strong> пише та налагоджує програмний код для розв'язання задачі.</li>
+    <li><strong>Critic / Verifier (Критик):</strong> тестує отриманий результат на помилки, відповідність вимогам та безпеку, за необхідності повертаючи задачу на доопрацювання.</li>
+</ul>
+
+<div class="alert alert-success">
+    <strong>✅ Завдання для самостійної здачі:</strong>
+    <ol class="mb-0">
+        <li>Скриншот робочого Agentflow у Flowise або сценарію в n8n із підключеними інструментами.</li>
+        <li>Журнал виконання (Execution Log), який демонструє успішний виклик агентом щонайменше одного зовнішнього інструменту.</li>
+        <li>Короткий опис розробленої системи: яку задачу вона автоматизує та які переваги надає в порівнянні зі звичайним чат-ботом.</li>
+    </ol>
+</div>

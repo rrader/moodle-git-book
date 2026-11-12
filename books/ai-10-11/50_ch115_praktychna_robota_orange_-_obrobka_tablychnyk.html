@@ -1,0 +1,129 @@
+---
+id: 115
+book_id: 3
+course_id: 6
+pagenum: 50
+subchapter: 1
+title: 'Практична робота: Orange — Обробка табличних даних для RAG та налаштування
+  персони'
+hidden: 0
+timemodified: 1794498808
+---
+<p style="font-size: 1.05rem; line-height: 1.6;">
+    У цій практичній роботі ми навчимося готувати реальні відкриті табличні дані для великих мовних моделей (LLM) за допомогою візуального середовища <strong>Orange Data Mining</strong>, генерувати структуровані текстові описи та створювати RAG-асистента з унікальною <strong>рольовою персоною (Persona)</strong>.
+</p>
+
+<div class="card mb-4 border-info" style="border-left: 5px solid #17a2b8; background-color: #f8f9fa;">
+    <div class="card-body py-3">
+        <h5 class="card-title text-info mb-2">💡 Чому табличні дані складні для LLM?</h5>
+        <p class="card-text mb-0">
+            Звичайні мовні моделі ефективно читають зв'язний текст, але часто плутають рядки, стовпчики та статистичні агрегації у великих «сирих» CSV-файлах. Щоб RAG-система давала 100% точні відповіді, дані попередньо агрегують та конвертують у зрозумілі природномовні формулювання.
+        </p>
+    </div>
+</div>
+
+<h3>🎯 Мета роботи:</h3>
+<ul>
+    <li>Завантажити та дослідити офіційний набір відкритих даних радіаційного стану АЕС України.</li>
+    <li>Побудувати візуальний пайплайн обробки даних у <strong>Orange Data Mining</strong>.</li>
+    <li>Виконати групування та агрегацію числових показників (Mean, Sum).</li>
+    <li>За допомогою віджета <code>Feature Constructor</code> згенерувати текстові формулювання для кожного об'єкта.</li>
+    <li>Налаштувати системний промпт із заданою <strong>персоною (роллю)</strong> для відповідей школярам.</li>
+</ul>
+
+<hr>
+
+<h3>📋 Покроковий порядок виконання роботи:</h3>
+
+<h4>Крок 1. Підготовка середовища та завантаження набору даних</h4>
+<ol>
+    <li>Встановіть та запустіть <strong>Orange Data Mining</strong> (якщо ще не встановлено, завантажте з офіційного сайту: <a href="https://orangedatamining.com/download/" target="_blank" rel="noopener">orangedatamining.com/download</a>).</li>
+    <li>Завантажте офіційний набір відкритих даних моніторингу радіаційного стану та скидів українських АЕС із порталу відкритих даних:
+        <br>
+        <a href="https://data.gov.ua/dataset/4a9d3d56-bd95-4c3e-97e7-1cdc7bcbd445" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-1">
+            Відкрити набір даних на data.gov.ua ↗
+        </a>
+    </li>
+</ol>
+
+<h4>Крок 2. Побудова пайплайну в Orange Canvas</h4>
+<p>Створіть у середовищі Orange наступний ланцюжок віджетів:</p>
+<div class="alert alert-light border text-center font-weight-bold" style="font-size: 1.1rem;">
+    [ CSV File Import ] &rarr; [ Select Columns ] &rarr; [ Aggregate ] &rarr; [ Feature Constructor ] &rarr; [ Data Table ] &rarr; [ Save Data ]
+</div>
+
+<ol>
+    <li><strong>CSV File Import:</strong> вкажіть шлях до завантаженого файлу з даними АЕС. Переконайтеся, що колонка <code>station</code> визначена як категоріальна (Text/Categorical), а показники скидів — як числові (Numeric).</li>
+    <li><strong>Aggregate:</strong> налаштуйте групування за назвою електростанції (<code>Group by: station</code>). Для числових показників виберіть розрахунок середнього (Mean) та суми (Sum):
+        <ul>
+            <li><code>volume</code> &rarr; Mean та Sum</li>
+            <li><code>iodine_radionuclides</code> &rarr; Mean</li>
+            <li><code>cs_137_emission</code> &rarr; Mean</li>
+            <li><code>co_60_emission</code> &rarr; Mean</li>
+            <li><code>index_radioactive_releas</code> &rarr; Mean</li>
+        </ul>
+    </li>
+    <li><strong>Feature Constructor:</strong> створіть нову текстову ознаку (String Feature) з назвою <code>station_summary</code> та запишіть формулу, що перетворює сухі цифри на зв'язний текст:
+        <pre><code class="language-python">"На станції " + station + " середній об'єм води, що скидалась, був " + str(volume___Mean) + " м³. Сумарно скинуто " + str(volume___Sum) + " м³. Викиди радіонуклідів йоду: " + str(iodine__radionuclides___Mean) + " кБк/добу. Викиди цезію-137: " + str(cs_137_emission___Mean) + " кБк/місяць. Показник радіоактивного викиду: " + str(index_radioactive_releas___Mean) + "."</code></pre>
+    </li>
+    <li><strong>Save Data:</strong> експортуйте підготовлені збагачені дані у форматі CSV або JSON для передачі в RAG.</li>
+</ol>
+
+<hr>
+
+<h3>🎭 Крок 3. Налаштування Персони (Persona) та промпту в RAG</h3>
+<p>
+    <strong>Персона</strong> — це рольовий контекст, у якому штучний інтелект взаємодіє з користувачем. Замість сухого робота ми надаємо моделі характер, цільову аудиторію та стиль пояснення.
+</p>
+
+<h5>Приклад формулювання системного промпту:</h5>
+<div class="card bg-light mb-3">
+    <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted font-weight-bold">System Prompt: Капітан Радіоактивність</h6>
+        <p class="card-text">
+            <em>«Ти — Капітан Радіоактивність, доброзичливий супергерой-еколог. Твоє завдання — пояснювати школярам складні офіційні екологічні звіти АЕС просто, наочно та з гумором.<br>
+            <strong>Правила поведінки:</strong><br>
+            1. Завжди спирайся виключно на надані факти з бази знань, не вигадуй неіснуючих цифр.<br>
+            2. Порівняння між станціями завжди оформлюй у вигляді чіткої Markdown-таблиці.<br>
+            3. Пояснюй абстрактні об'єми та беккерелі через зрозумілі життєві аналогії (кількість олімпійських басейнів, відер води, порівняння з безпечним фоном бананів або гранітної бруківки).<br>
+            4. Кожну відповідь закінчуй коротким розділом "💡 Екологічна порада від Капітана".»</em>
+        </p>
+    </div>
+</div>
+
+<h5>Очікуваний формат табличного виводу моделі:</h5>
+<table class="table table-bordered table-sm text-center">
+    <thead class="thead-light">
+        <tr>
+            <th>Станція</th>
+            <th>Середній скид води</th>
+            <th>Викиди Цезію-137</th>
+            <th>Рівень безпеки</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>ЗАЕС</strong></td>
+            <td>12 345 м³ (≈ 5 басейнів)</td>
+            <td>10 кБк/місяць</td>
+            <td>🟢 В межах норми</td>
+        </tr>
+        <tr>
+            <td><strong>ПАЕС</strong></td>
+            <td>987 м³ (≈ 0.4 басейну)</td>
+            <td>50 кБк/місяць</td>
+            <td>🟢 В межах норми</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<div class="alert alert-success">
+    <strong>✅ Завдання для звіту:</strong>
+    <ol class="mb-0">
+        <li>Скриншот робочої схеми в Orange Canvas з налаштованим віджетом <code>Feature Constructor</code>.</li>
+        <li>Фрагмент згенерованого текстового стовпчика <code>station_summary</code> для двох різних станцій.</li>
+        <li>Приклад діалогу з RAG-асистентом, де чітко видно роботу заданої <strong>персони</strong> та порівняльну таблицю.</li>
+    </ol>
+</div>
