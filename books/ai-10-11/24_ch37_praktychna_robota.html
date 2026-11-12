@@ -6,6 +6,60 @@ pagenum: 24
 subchapter: 1
 title: Практична робота
 hidden: 0
-timemodified: 1735233572
+timemodified: 1794495811
 ---
-<p dir="ltr" style="text-align: left;"></p><h4><span>Завдання №1: Знайди зірку</span></h4><ul><li>Відкрийте пісочницю&nbsp;https://www.rmn.pp.ua/ai-lab-sandbox/</li><li>Оберіть завдання "Знайди зірку"</li></ul><p><img src="@@PLUGINFILE@@/Screenshot%202024-12-26%20at%2017.33.47.png" alt="" width="601" height="305" role="presentation"><br></p><p>Давайте розберемо приклад коду із цього завдання по рядочках:</p><strong>TBD😅</strong><p></p>
+<p dir="ltr" style="font-size: 1.05rem;"><strong>Мета практичної роботи:</strong> опанувати базовий інженерний конвеєр обробки зображень у бібліотеці <strong>OpenCV</strong>: знебарвлення (grayscale), придушення шуму фільтром Гауса, виявлення меж алгоритмом Canny, пошук замкнених контурів та програмне відсікання шуму за площею фігур.</p>
+
+<div class="row my-4">
+  <div class="col-md-6 mb-3">
+    <div class="card h-100" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center p-3">
+        <strong>🎬 Урок 1: Компʼютерний зір — вступ та базові операції</strong>
+        <a href="https://www.loom.com/share/0d81e9b9bd2149c492040bf6674e9983" target="_blank" class="btn btn-sm btn-outline-primary">Loom ↗</a>
+      </div>
+      <div class="card-body p-0">
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+          <iframe src="https://www.loom.com/embed/0d81e9b9bd2149c492040bf6674e9983" title="Компʼютерний зір — вступ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top:0; left: 0; width: 100%; height: 100%;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <div class="card h-100" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center p-3">
+        <strong>🎬 Урок 2: Пошук контурів у зображеннях OpenCV</strong>
+        <a href="https://www.loom.com/share/6fc6c0e2cd614da3bea2c906b32ca64d" target="_blank" class="btn btn-sm btn-outline-primary">Loom ↗</a>
+      </div>
+      <div class="card-body p-0">
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+          <iframe src="https://www.loom.com/embed/6fc6c0e2cd614da3bea2c906b32ca64d" title="Пошук контурів у OpenCV" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top:0; left: 0; width: 100%; height: 100%;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4>Інженерний конвеєр (Pipeline) обробки зображення</h4>
+
+<ol>
+  <li><strong>Конвертація у градації сірого (Grayscale):</strong> перетворює 3-канальне кольорове зображення (BGR) на 1-канальне для зменшення обчислювальної складності:
+    <pre style="background: #282c34; color: #abb2bf; padding: 12px; border-radius: 6px;"><code>gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)</code></pre>
+  </li>
+  <li><strong>Згладжування Гауса (Gaussian Blur):</strong> прибирає високочастотний цифровий шум (дрібні поодинокі артефакти сенсора камери):
+    <pre style="background: #282c34; color: #abb2bf; padding: 12px; border-radius: 6px;"><code>blurred = cv2.GaussianBlur(gray, (5, 5), 0)</code></pre>
+  </li>
+  <li><strong>Детектор меж Canny:</strong> знаходить різкі перепади яскравості (градієнти) за двома порогами:
+    <pre style="background: #282c34; color: #abb2bf; padding: 12px; border-radius: 6px;"><code>edges = cv2.Canny(blurred, threshold1=50, threshold2=150)</code></pre>
+  </li>
+  <li><strong>Пошук та фільтрація контурів:</strong> виділення зв'язних ліній та відсікання шуму за порогом площі:
+    <pre style="background: #282c34; color: #abb2bf; padding: 12px; border-radius: 6px;"><code>contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+valid_figures = [cnt for cnt in contours if cv2.contourArea(cnt) > 50]
+cv2.drawContours(output_img, valid_figures, -1, (0, 255, 0), 2)</code></pre>
+  </li>
+</ol>
+
+<div class="card p-3 my-3" style="border-left: 4px solid #28a745; background-color: #f8fff9;">
+  <p><strong>🌐 Інтерактивна пісочниця:</strong></p>
+  <p>Спробувати роботу алгоритмів у реальному часі можна в онлайн-пісочниці: <a href="https://www.rmn.pp.ua/ai-lab-sandbox/" target="_blank">https://www.rmn.pp.ua/ai-lab-sandbox/</a> (завдання <em>«Знайди зірку»</em> та <em>«Пошук контурів»</em>).</p>
+</div>

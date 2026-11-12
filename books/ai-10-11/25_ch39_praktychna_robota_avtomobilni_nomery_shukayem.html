@@ -6,6 +6,65 @@ pagenum: 25
 subchapter: 1
 title: 'Практична робота: Автомобільні номери. Шукаємо прямокутні фігури.'
 hidden: 0
-timemodified: 1735238467
+timemodified: 1794495811
 ---
-<p dir="ltr">Розпізнавання номерів машин</p><p dir="ltr"></p><p dir="ltr">Набір даних:&nbsp;<a href="https://www.kaggle.com/datasets/andrewmvd/car-plate-detection" target="_blank">https://www.kaggle.com/datasets/andrewmvd/car-plate-detection</a></p><p dir="ltr"><a href="https://www.kaggle.com/datasets/jaidalmotra/road-sign-detection" target="_blank">https://www.kaggle.com/datasets/jaidalmotra/road-sign-detection</a></p><p></p><p dir="ltr" style="text-align: left;">https://www.kaggle.com/code/rrader93/notebook6b2ff1f3a1/edit</p><p></p>
+<p dir="ltr" style="font-size: 1.05rem;"><strong>Мета практичної роботи:</strong> створити алгоритм локалізації номерного знака автомобіля на реальних фотографіях за допомогою геометричного аналізу контурів та багатокутної апроксимації (OpenCV).</p>
+
+<h4>Алгоритм пошуку прямокутного номерного знака</h4>
+<p>Номерний знак автомобіля має сталі геометричні властивості: високу контрастність символів відносно фону, чіткі прямокутні межі та типове співвідношення сторін (aspect ratio приблизно 4:1 або 3:1).</p>
+
+<ol>
+  <li><strong>Знебарвлення та білатеральна фільтрація:</strong>
+    Звичайне розмиття Гауса розмиває межі об'єктів. <em>Білатеральний фільтр</em> (Bilateral Filter) унікальний тим, що придушує шум у плоских областях, але <strong>зберігає надзвичайно гострі краї</strong> символів і рамки:
+    <pre style="background: #282c34; color: #abb2bf; padding: 12px; border-radius: 6px;"><code>gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# 11 - діаметр піксельного околу, 17 - sigmaColor, 17 - sigmaSpace
+filtered = cv2.bilateralFilter(gray, 11, 17, 17)</code></pre>
+  </li>
+  <li><strong>Детекція меж Canny:</strong>
+    <pre style="background: #282c34; color: #abb2bf; padding: 12px; border-radius: 6px;"><code>edges = cv2.Canny(filtered, 30, 200)</code></pre>
+  </li>
+  <li><strong>Сортування контурів за площею:</strong>
+    Оскільки номер є досить помітним елементом, шукаємо найбільші контури:
+    <pre style="background: #282c34; color: #abb2bf; padding: 12px; border-radius: 6px;"><code>contours, _ = cv2.findContours(edges.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+contours = sorted(contours, key=cv2.contourArea, reverse=True)[:10]</code></pre>
+  </li>
+  <li><strong>Апроксимація багатокутника (пошук 4 вершин):</strong>
+    Алгоритм Рамера–Дугласа–Пекера (<code>cv2.approxPolyDP</code>) спрощує контур до багатокутника. Номерна табличка — це замкнений чотирикутник:
+    <pre style="background: #282c34; color: #abb2bf; padding: 12px; border-radius: 6px;"><code>plate_contour = None
+for c in contours:
+    peri = cv2.arcLength(c, True)
+    approx = cv2.approxPolyDP(c, 0.018 * peri, True)
+    if len(approx) == 4:  # Знайдено чотирикутник!
+        plate_contour = approx
+        break</code></pre>
+  </li>
+  <li><strong>Виділення та кроп зони номерного знака:</strong>
+    Використовуємо маску або координатний зріз <code>cv2.boundingRect</code> для подальшої передачі таблички в OCR (розпізнавання тексту, наприклад Tesseract або EasyOCR).
+  </li>
+</ol>
+
+<h4>Датасети та середовище розробки</h4>
+
+<div class="row my-3">
+  <div class="col-md-6 mb-3">
+    <div class="card h-100 p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background-color: #f8f9fa;">
+      <h5 style="margin-top: 0; color: #0f6cbf;">📊 Датасет: Car License Plate Detection</h5>
+      <p style="font-size: 0.95rem;">Набір із понад 400 фотографій автомобілів із розміченими прямокутниками номерних знаків у форматі Pascal VOC XML.</p>
+      <a href="https://www.kaggle.com/datasets/andrewmvd/car-plate-detection" target="_blank" class="btn btn-sm btn-outline-primary">Відкрити датасет на Kaggle ↗</a>
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <div class="card h-100 p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background-color: #f8f9fa;">
+      <h5 style="margin-top: 0; color: #0f6cbf;">🚦 Датасет: Road Sign Detection</h5>
+      <p style="font-size: 0.95rem;">Суміжний датасет дорожніх знаків для класифікації геометричних форм (кола, трикутники, восьмикутники Stop).</p>
+      <a href="https://www.kaggle.com/datasets/jaidalmotra/road-sign-detection" target="_blank" class="btn btn-sm btn-outline-primary">Відкрити датасет знаків ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="card p-3 my-3" style="border-left: 4px solid #0f6cbf; background-color: #fdfdfd;">
+  <p class="mb-1"><strong>🚀 Готовий інтерактивний Kaggle Notebook:</strong></p>
+  <p class="mb-2 text-muted">Викладацький стартовий блокнот із покроковою реалізацією конвеєра, завантаженням зображень та візуалізацією обрізаних номерних знаків:</p>
+  <a href="https://www.kaggle.com/code/rrader93/notebook6b2ff1f3a1" target="_blank" class="btn btn-primary" style="font-weight: 500; width: fit-content;">Відкрити Kaggle Notebook ↗</a>
+</div>
