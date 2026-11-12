@@ -1,7 +1,7 @@
 glossary_id: 3
 name: Джерела
 course_id: 6
-entries_count: 11
+entries_count: 12
 entries:
 - id: 82
   concept: ai-book
@@ -107,6 +107,24 @@ entries:
   fullmatch: 0
   definition: 'UNESCO. (2022). <em>K-12 AI curricula: A mapping of government-endorsed
     AI curricula.</em> Retrieved from <a rel="noopener" target="_new" href="https://unesdoc.unesco.org/ark:/48223/pf0000380602">https://unesdoc.unesco.org/ark:/48223/pf0000380602</a>'
+- id: 87
+  concept: vatson-detective
+  aliases:
+  - Елементарно, Ватсоне!
+  - Елементарно Ватсоне
+  - Детектив-загадки
+  - Володимир Поліщук
+  - книга детективів
+  - vatson.pdf
+  usedynalink: 1
+  casesensitive: 0
+  fullmatch: 0
+  definition: '<p dir="ltr"><strong>Володимир Поліщук. «Елементарно, Ватсоне! Детектив-загадки»</strong>
+    — збірка детективних історій, логічних головоломок та прикладних розслідувань
+    за участі дільничного Петренка та сержанта Власюка (122 сторінки). Використовується
+    як банк сюжетів для розробки баз знань, формулювання фактів і правил та створення
+    експертних систем на Prolog: <a href="https://moodle.rmn.pp.ua/pluginfile.php/247/mod_book/chapter/122/vatson.pdf"
+    target="_blank" rel="noopener noreferrer">Завантажити книгу (PDF, 2.7 MB) ↗</a></p>'
 - id: 41
   concept: Елементи ШІ
   aliases: []
